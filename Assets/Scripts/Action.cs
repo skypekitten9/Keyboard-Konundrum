@@ -6,20 +6,25 @@ public class Action : MonoBehaviour
 {
     public bool Activated { get; set; } = false;
 
-    [SerializeField] private float speed;
-    [SerializeField] private Vector2 positionClamp;
+    [SerializeField] private float speed = 15.0f;
+    [SerializeField] private float maxHeight = 3.0f;
 
-    private float value;
     private Vector3 startPosition;
     private Rigidbody rb;
+
+    private float value;
+    private Vector2 positionClamp;
+
 
 
 
     private void Awake()
     {
         startPosition = gameObject.transform.position;
-        value = startPosition.y;
         rb = GetComponent<Rigidbody>();
+
+        value = startPosition.y;
+        positionClamp = new Vector2(value, value + maxHeight);
     }
 
 
