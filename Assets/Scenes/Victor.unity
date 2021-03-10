@@ -1028,17 +1028,33 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2189952379789807189, guid: dc4eacac469f7954aab6f7198dde5fd4, type: 3}
+      propertyPath: m_ConnectedAnchor.y
+      value: -0.0000007344872
+      objectReference: {fileID: 0}
+    - target: {fileID: 2189952379789807189, guid: dc4eacac469f7954aab6f7198dde5fd4, type: 3}
+      propertyPath: m_ConnectedAnchor.z
+      value: 0.0000003762543
+      objectReference: {fileID: 0}
+    - target: {fileID: 2189952380083926681, guid: dc4eacac469f7954aab6f7198dde5fd4, type: 3}
+      propertyPath: m_ConnectedAnchor.y
+      value: -0.00000042994702
+      objectReference: {fileID: 0}
+    - target: {fileID: 2189952380083926681, guid: dc4eacac469f7954aab6f7198dde5fd4, type: 3}
+      propertyPath: m_ConnectedAnchor.z
+      value: 0.00000011362137
+      objectReference: {fileID: 0}
     - target: {fileID: 2189952380830466212, guid: dc4eacac469f7954aab6f7198dde5fd4, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 3.1407728
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2189952380830466212, guid: dc4eacac469f7954aab6f7198dde5fd4, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -7.445
+      value: 2.16
       objectReference: {fileID: 0}
     - target: {fileID: 2189952380830466212, guid: dc4eacac469f7954aab6f7198dde5fd4, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1.8563421
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2189952380830466212, guid: dc4eacac469f7954aab6f7198dde5fd4, type: 3}
       propertyPath: m_LocalRotation.x
@@ -1075,6 +1091,14 @@ PrefabInstance:
     - target: {fileID: 2189952380830466219, guid: dc4eacac469f7954aab6f7198dde5fd4, type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 2189952381156930174, guid: dc4eacac469f7954aab6f7198dde5fd4, type: 3}
+      propertyPath: m_ConnectedAnchor.x
+      value: -0.00000023635394
+      objectReference: {fileID: 0}
+    - target: {fileID: 2189952381156930174, guid: dc4eacac469f7954aab6f7198dde5fd4, type: 3}
+      propertyPath: m_ConnectedAnchor.y
+      value: 0.20265055
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dc4eacac469f7954aab6f7198dde5fd4, type: 3}
