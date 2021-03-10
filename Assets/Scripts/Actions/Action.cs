@@ -18,6 +18,9 @@ public abstract class Action : MonoBehaviour
     private Stopwatch stopwatch = new Stopwatch();
     [SerializeField] private float timerLength = 2000.0f;
 
+    [SerializeField] private float tapChangeSpeed = 1.0f;
+
+
 
     private void Awake()
     {
@@ -75,7 +78,12 @@ public abstract class Action : MonoBehaviour
 
             case InteractionType.Tap:
                 {
+                    activated = false;
 
+                    if (Input.GetKeyDown(key))
+                    {
+                        value = Mathf.Clamp(value += Time.deltaTime * tapChangeSpeed, clamp.x, clamp.y);
+                    }
                 }
                 break;
         }
