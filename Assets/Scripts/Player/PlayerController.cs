@@ -8,46 +8,59 @@ public class PlayerController : MonoBehaviour
 
     private ConfigurableJoint cj;
     private Transform ragdoll;
+    private Rigidbody rb;
 
 
     private void Awake()
     {
         cj = transform.GetComponentInChildren<ConfigurableJoint>();
         ragdoll = transform.GetChild(0);
+        rb = GetComponent<Rigidbody>();
     }
 
 
     private void Update()
     {
         Move();
+        Rotate();
     }
 
 
     private void Move()
     {
+        Vector3 moveVector = Vector3.zero;
+
         if (Input.GetKey(KeyCode.RightArrow))
         {
-            ragdoll.position += Vector3.right * speed;
+            moveVector += Vector3.right;
         }
         if (Input.GetKey(KeyCode.LeftArrow))
         {
-            ragdoll.position += Vector3.left * speed;
+            moveVector += Vector3.left;
         }
         if (Input.GetKey(KeyCode.UpArrow))
         {
-            ragdoll.position += Vector3.forward * speed;
+            moveVector += Vector3.forward;
         }
         if (Input.GetKey(KeyCode.DownArrow))
         {
-            ragdoll.position += Vector3.back * speed;
+            moveVector += Vector3.back;
         }
         if (Input.GetKey(KeyCode.K))
         {
-            ragdoll.position += Vector3.up * speed;
+            moveVector += Vector3.up;
         }
         if (Input.GetKey(KeyCode.L))
         {
-            ragdoll.position += Vector3.down * speed;
+            moveVector += Vector3.down;
         }
+
+        rb.AddForce(moveVector.normalized * Time.deltaTime * speed, ForceMode.VelocityChange);
     }
+
+    private void Rotate()
+    {
+
+    }
+
 }
