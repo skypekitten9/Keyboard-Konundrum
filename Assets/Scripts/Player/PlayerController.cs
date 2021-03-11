@@ -4,26 +4,58 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    private static PlayerController instance = null;
+    public static PlayerController Instance { get { return instance; } }
+
+
     [SerializeField] private float speed = 1.0f;
 
-    private ConfigurableJoint cj;
-    private Transform ragdoll;
-    private Rigidbody rb;
+    //private ConfigurableJoint joint;
+    private Rigidbody playerRigidbody;
+
+    //private Transform ragdoll;
+    private Rigidbody ragdollRigidbody;
+    private Animator animator;
+
+    private bool ragdollEnabled = false;
 
 
     private void Awake()
     {
-        cj = transform.GetComponentInChildren<ConfigurableJoint>();
-        ragdoll = transform.GetChild(0);
-        rb = GetComponent<Rigidbody>();
+        if (Instance != null && instance != this)
+            Destroy(this);
+        else
+            instance = this;
+
+        //joint = transform.GetComponentInChildren<ConfigurableJoint>();
+        playerRigidbody = GetComponent<Rigidbody>();
+
+        //ragdoll = transform.GetChild(0);
+        ragdollRigidbody = transform.GetChild(0).GetComponent<Rigidbody>();
+        animator = GetComponentInChildren<Animator>();
     }
 
 
     private void Update()
     {
-        Move();
-        Rotate();
+        if (Input.GetKeyDown(KeyCode.Return))
+            ToggleRagdollPhysics();
+
+        if (ragdollEnabled == false)
+        {
+            Move();
+            Rotate();
+        }
     }
+
+
+    private void ToggleRagdollPhysics()
+    {
+        ragdollEnabled = !ragdollEnabled;
+        ragdollRigidbody.isKinematic = !ragdollEnabled;
+        animator.enabled = !ragdollEnabled;
+    }
+
 
 
     private void Move()
@@ -55,7 +87,7 @@ public class PlayerController : MonoBehaviour
             moveVector += Vector3.down;
         }
 
-        rb.AddForce(moveVector.normalized * Time.deltaTime * speed, ForceMode.VelocityChange);
+        playerRigidbody.AddForce(moveVector.normalized * Time.deltaTime * speed, ForceMode.VelocityChange);
     }
 
     private void Rotate()
