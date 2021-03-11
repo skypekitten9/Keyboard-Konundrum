@@ -14,6 +14,7 @@ public class PlayerController : MonoBehaviour
     private Rigidbody playerRigidbody;
 
     //private Transform ragdoll;
+    private Transform ragdollTransform;
     private Rigidbody ragdollRigidbody;
     private Animator animator;
 
@@ -31,6 +32,7 @@ public class PlayerController : MonoBehaviour
         playerRigidbody = GetComponent<Rigidbody>();
 
         //ragdoll = transform.GetChild(0);
+        ragdollTransform = transform.GetChild(0).GetComponent<Transform>();
         ragdollRigidbody = transform.GetChild(0).GetComponent<Rigidbody>();
         animator = GetComponentInChildren<Animator>();
     }
@@ -54,6 +56,11 @@ public class PlayerController : MonoBehaviour
         ragdollEnabled = !ragdollEnabled;
         ragdollRigidbody.isKinematic = !ragdollEnabled;
         animator.enabled = !ragdollEnabled;
+        if(!ragdollEnabled)
+        {
+            ragdollTransform.position = gameObject.transform.position;
+            ragdollTransform.rotation = gameObject.transform.rotation;
+        }
     }
 
 
