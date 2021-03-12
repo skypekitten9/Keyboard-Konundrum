@@ -8,14 +8,13 @@ public class PlayerController : MonoBehaviour
     public static PlayerController Instance { get { return instance; } }
 
 
-    private const float standingHeight = 0.66f;
-
     [SerializeField] private float speed = 1.0f;
+    [SerializeField] private float rotationSpeed = 3.0f;
+    //[SerializeField] private float disconnectedThreshhold = 1.0f;
 
-    //private ConfigurableJoint joint;
+
     private Rigidbody playerRigidbody;
 
-    //private Transform ragdoll;
     private Transform ragdollTransform;
     private Transform ragdollhipsTransform;
     private Rigidbody ragdollRigidbody;
@@ -31,10 +30,7 @@ public class PlayerController : MonoBehaviour
         else
             instance = this;
 
-        //joint = transform.GetComponentInChildren<ConfigurableJoint>();
         playerRigidbody = GetComponent<Rigidbody>();
-
-        //ragdoll = transform.GetChild(0);
         ragdollTransform = transform.GetChild(0).GetComponent<Transform>();
         ragdollhipsTransform = transform.GetChild(0).GetChild(2).GetComponent<Transform>();
         ragdollRigidbody = transform.GetChild(0).GetComponent<Rigidbody>();
@@ -50,7 +46,6 @@ public class PlayerController : MonoBehaviour
         if (ragdollEnabled == false)
         {
             Move();
-            Rotate();
         }
     }
 
@@ -90,39 +85,27 @@ public class PlayerController : MonoBehaviour
 
     private void Move()
     {
-        Vector3 moveVector = Vector3.zero;
+        //if (Vector3.Distance(ragdollhipsTransform.position, transform.position) < disconnectedThreshhold)
+        //{
+        if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.RightArrow))
+        {
+            Vector3 moveVector = Vector3.zero;
 
-        if (Input.GetKey(KeyCode.RightArrow))
-        {
-            moveVector += Vector3.right;
-        }
-        if (Input.GetKey(KeyCode.LeftArrow))
-        {
-            moveVector += Vector3.left;
-        }
-        if (Input.GetKey(KeyCode.UpArrow))
-        {
-            moveVector += Vector3.forward;
-        }
-        if (Input.GetKey(KeyCode.DownArrow))
-        {
-            moveVector += Vector3.back;
-        }
-        if (Input.GetKey(KeyCode.K))
-        {
-            moveVector += Vector3.up;
-        }
-        if (Input.GetKey(KeyCode.L))
-        {
-            moveVector += Vector3.down;
-        }
+            moveVector += Vector3.right * Input.GetAxis("Horizontal");
+            moveVector += Vector3.forward * Input.GetAxis("Vertical");
 
-        playerRigidbody.AddForce(moveVector.normalized * Time.deltaTime * speed, ForceMode.VelocityChange);
-    }
+            playerRigidbody.AddForce(moveVector.normalized * Time.deltaTime * speed, ForceMode.VelocityChange);
 
-    private void Rotate()
-    {
-
+            if (moveVector != Vector3.zero)
+            {
+                transform.localRotation = Quaternion.Lerp(transform.localRotation, Quaternion.LookRotation(moveVector), Time.deltaTime * rotationSpeed);
+            }
+        }
+        //}
+        //else
+        //{
+        //Debug.Log("Cant move! Player is stuck on something");
+        //}
     }
 
 }
