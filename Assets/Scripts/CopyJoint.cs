@@ -5,26 +5,54 @@ using UnityEngine;
 public class CopyJoint : MonoBehaviour
 {
     [SerializeField] private Transform targetLimb;
-    private ConfigurableJoint characterJoint;
-    public bool enabled;
+    private ConfigurableJoint configJoint;
+    private bool active;
+    private float initialPositionSpringX;
+    private float initialPositionSpringYZ;
+
+    private JointDrive jointDriveX;
+    private JointDrive jointDriveYZ;
     Quaternion targetInitialRotation;
 
     void Start()
     {
-        if(enabled)
+        this.configJoint = this.GetComponent<ConfigurableJoint>();
+        active = true;
+        initialPositionSpringX = configJoint.angularXDrive.positionSpring;
+        initialPositionSpringYZ = configJoint.angularYZDrive.positionSpring;
+
+        this.jointDriveX = configJoint.angularXDrive;
+        this.jointDriveYZ = configJoint.angularYZDrive;
+        this.targetInitialRotation = this.targetLimb.transform.localRotation;
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Return))
         {
-            this.characterJoint = this.GetComponent<ConfigurableJoint>();
-            this.targetInitialRotation = this.targetLimb.transform.localRotation;
+            active = !active;
+            if (active)
+            {
+                jointDriveX.positionSpring = initialPositionSpringX;
+                jointDriveYZ.positionSpring = initialPositionSpringYZ;
+            }
+            else
+            {
+                jointDriveX.positionSpring = 0;
+                jointDriveYZ.positionSpring = 0;
+            }
         }
         
     }
 
     private void FixedUpdate()
     {
-        if (enabled)
+        if (active)
         {
-            characterJoint.targetRotation = copyRotation();
+            configJoint.targetRotation = copyRotation();
         }
+        configJoint.angularXDrive = jointDriveX;
+        configJoint.angularYZDrive = jointDriveYZ;
     }
 
     private Quaternion copyRotation()
