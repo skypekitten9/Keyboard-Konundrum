@@ -35,11 +35,17 @@ public class CopyJoint : MonoBehaviour
             {
                 jointDriveX.positionSpring = initialPositionSpringX;
                 jointDriveYZ.positionSpring = initialPositionSpringYZ;
+                configJoint.angularXMotion = ConfigurableJointMotion.Free;
+                configJoint.angularYMotion = ConfigurableJointMotion.Free;
+                configJoint.angularZMotion = ConfigurableJointMotion.Free;
             }
             else
             {
                 jointDriveX.positionSpring = 0;
                 jointDriveYZ.positionSpring = 0;
+                configJoint.angularXMotion = ConfigurableJointMotion.Limited;
+                configJoint.angularYMotion = ConfigurableJointMotion.Limited;
+                configJoint.angularZMotion = ConfigurableJointMotion.Limited;
             }
         }
         
