@@ -8,9 +8,10 @@ public class PlayerController : MonoBehaviour
     public static PlayerController Instance { get { return instance; } }
 
 
-    [SerializeField] private float speed = 1.0f;
+    private Vector3 movement = Vector3.zero;
+
+    [SerializeField] private float moveSpeed = 10.0f;
     [SerializeField] private float rotationSpeed = 3.0f;
-    //[SerializeField] private float disconnectedThreshhold = 1.0f;
 
 
     private Rigidbody playerRigidbody;
@@ -45,8 +46,16 @@ public class PlayerController : MonoBehaviour
 
         if (ragdollEnabled == false)
         {
-            Move();
+            movement.x = Input.GetAxisRaw("Horizontal");
+            movement.z = Input.GetAxisRaw("Vertical");
+            movement.Normalize();
         }
+    }
+
+    private void FixedUpdate()
+    {
+        PerformMovement();
+        PerformRotation();
     }
 
 
@@ -83,29 +92,18 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void Move()
+
+    private void PerformMovement()
     {
-        //if (Vector3.Distance(ragdollhipsTransform.position, transform.position) < disconnectedThreshhold)
-        //{
-        if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.RightArrow))
+        playerRigidbody.MovePosition(playerRigidbody.position + movement * moveSpeed * Time.deltaTime);
+    }
+
+    private void PerformRotation()
+    {
+        if (movement != Vector3.zero)
         {
-            Vector3 moveVector = Vector3.zero;
-
-            moveVector += Vector3.right * Input.GetAxis("Horizontal");
-            moveVector += Vector3.forward * Input.GetAxis("Vertical");
-
-            playerRigidbody.AddForce(moveVector.normalized * Time.deltaTime * speed, ForceMode.VelocityChange);
-
-            if (moveVector != Vector3.zero)
-            {
-                transform.localRotation = Quaternion.Lerp(transform.localRotation, Quaternion.LookRotation(moveVector), Time.deltaTime * rotationSpeed);
-            }
+            transform.localRotation = Quaternion.Lerp(transform.localRotation, Quaternion.LookRotation(movement), Time.deltaTime * rotationSpeed);
         }
-        //}
-        //else
-        //{
-        //Debug.Log("Cant move! Player is stuck on something");
-        //}
     }
 
 }
