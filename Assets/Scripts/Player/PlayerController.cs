@@ -8,6 +8,8 @@ public class PlayerController : MonoBehaviour
     public static PlayerController Instance { get { return instance; } }
 
 
+    private const float standingHeight = 0.66f;
+
     [SerializeField] private float speed = 1.0f;
 
     //private ConfigurableJoint joint;
@@ -15,6 +17,7 @@ public class PlayerController : MonoBehaviour
 
     //private Transform ragdoll;
     private Transform ragdollTransform;
+    private Transform ragdollhipsTransform;
     private Rigidbody ragdollRigidbody;
     private Animator animator;
 
@@ -33,6 +36,7 @@ public class PlayerController : MonoBehaviour
 
         //ragdoll = transform.GetChild(0);
         ragdollTransform = transform.GetChild(0).GetComponent<Transform>();
+        ragdollhipsTransform = transform.GetChild(0).GetChild(2).GetComponent<Transform>();
         ragdollRigidbody = transform.GetChild(0).GetComponent<Rigidbody>();
         animator = GetComponentInChildren<Animator>();
     }
@@ -41,7 +45,7 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Return))
-            ToggleRagdollPhysics();
+            StartCoroutine(ToggleRagdollPhysics());
 
         if (ragdollEnabled == false)
         {
@@ -51,19 +55,38 @@ public class PlayerController : MonoBehaviour
     }
 
 
-    private void ToggleRagdollPhysics()
+    private IEnumerator ToggleRagdollPhysics()
     {
         ragdollEnabled = !ragdollEnabled;
         ragdollRigidbody.isKinematic = !ragdollEnabled;
         animator.enabled = !ragdollEnabled;
-        if(!ragdollEnabled)
+
+        if (!ragdollEnabled)
         {
-            ragdollTransform.position = gameObject.transform.position;
-            ragdollTransform.rotation = gameObject.transform.rotation;
+            Vector3 playerPos = transform.position;
+            Vector3 playerTargetPos = ragdollhipsTransform.position;
+
+            Vector3 ragdollPos = ragdollTransform.localPosition;
+            Vector3 ragdollTargetPos = Vector3.zero;
+
+            Quaternion ragdollRot = ragdollTransform.rotation;
+            Quaternion ragdollTargetRot = gameObject.transform.rotation;
+
+
+            int frames = 60;
+            for (float i = 1; i <= frames; i++)
+            {
+                transform.position = Vector3.Lerp(playerPos, playerTargetPos, i / frames);
+                ragdollTransform.localPosition = Vector3.Lerp(ragdollPos, ragdollTargetPos, i / frames);
+                ragdollTransform.rotation = Quaternion.Lerp(ragdollRot, ragdollTargetRot, i / frames);
+                yield return new WaitForFixedUpdate();
+            }
+
+            transform.position = playerTargetPos;
+            ragdollTransform.localPosition = ragdollTargetPos;
+            ragdollTransform.rotation = ragdollTargetRot;
         }
     }
-
-
 
     private void Move()
     {
