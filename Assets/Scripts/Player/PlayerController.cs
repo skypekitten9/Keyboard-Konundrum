@@ -1,50 +1,39 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿#define DEBUG
+#undef DEBUG
+
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    private static PlayerController instance = null;
-    public static PlayerController Instance { get { return instance; } }
-
+    [SerializeField] private float maxSpeed = 5.0f;
+    [SerializeField] private float turnSpeed = 3.0f;
 
     private Vector3 movement = Vector3.zero;
 
-    [SerializeField] private float moveSpeed = 10.0f;
-    [SerializeField] private float rotationSpeed = 3.0f;
-
-
-    private Rigidbody playerRigidbody;
-
-    private Transform ragdollTransform;
-    private Transform ragdollhipsTransform;
     private Rigidbody ragdollRigidbody;
+    private Transform ragdollHipsTransform;
     private Animator animator;
 
-    private bool ragdollEnabled = false;
+    const float TARGET_DISTANCE_TO_GROUND = 0.16f;
+
+    [SerializeField] private LayerMask groundMask;
+
 
 
     private void Awake()
     {
-        if (Instance != null && instance != this)
-            Destroy(this);
-        else
-            instance = this;
-
-        playerRigidbody = GetComponent<Rigidbody>();
-        ragdollTransform = transform.GetChild(0).GetComponent<Transform>();
-        ragdollhipsTransform = transform.GetChild(0).GetChild(2).GetComponent<Transform>();
-        ragdollRigidbody = transform.GetChild(0).GetComponent<Rigidbody>();
-        animator = GetComponentInChildren<Animator>();
+        ragdollRigidbody = GetComponent<Rigidbody>();
+        ragdollHipsTransform = transform.GetChild(2).transform;
+        animator = transform.parent.GetComponentInChildren<Animator>();
     }
 
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Return))
-            StartCoroutine(ToggleRagdollPhysics());
+        //if (Input.GetKeyDown(KeyCode.Return))
+        //    StartCoroutine(ToggleRagdollPhysics());
 
-        if (ragdollEnabled == false)
+        if (true)
         {
             movement.x = Input.GetAxisRaw("Horizontal");
             movement.z = Input.GetAxisRaw("Vertical");
@@ -54,11 +43,30 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        PerformMovement();
         PerformRotation();
+        PerformMovement();
+
+        //Vector3 hipsOffset = new Vector3(ragdollHipsTransform.localPosition.x, 0.0f, ragdollHipsTransform.localPosition.z);
+        //if (hipsOffset.magnitude > 0.6f && ragdollRigidbody.isKinematic == true)
+        //{
+        //    StartCoroutine(WallPositionReset());
+        //}
+
+#if DEBUG
+        Debug.Log($"Ragdoll vel= {ragdollRigidbody.velocity.magnitude}");
+#endif
     }
 
 
+    //private IEnumerator WallPositionReset()
+    //{
+    //    ragdollRigidbody.isKinematic = false;
+    //    yield return new WaitForFixedUpdate();
+    //    ragdollRigidbody.isKinematic = true;
+    //}
+
+
+    /*
     private IEnumerator ToggleRagdollPhysics()
     {
         ragdollEnabled = !ragdollEnabled;
@@ -91,19 +99,47 @@ public class PlayerController : MonoBehaviour
             ragdollTransform.rotation = ragdollTargetRot;
         }
     }
-
+    */
 
     private void PerformMovement()
     {
-        playerRigidbody.MovePosition(playerRigidbody.position + movement * moveSpeed * Time.deltaTime);
+        Vector3 newPosition = ragdollRigidbody.position + movement * maxSpeed * Time.deltaTime;
+        Vector3 groundCorrectedPosition = new Vector3(newPosition.x, GetGroundTargetHeight(), newPosition.z);
+
+        if (Physics.CheckSphere(groundCorrectedPosition, 0.01f, groundMask) == false)   //Checks if the desired move position lies within a collider or not
+        {
+            ragdollRigidbody.MovePosition(groundCorrectedPosition);
+
+            animator.SetFloat("Velocity X", movement.x);    //Set animation properties
+            animator.SetFloat("Velocity Z", movement.z);
+        }
+        else
+        {
+            //Stops the walking animation when walking into walls.
+            // OBS: This feature is optional!
+            animator.SetFloat("Velocity X", 0.0f);  
+            animator.SetFloat("Velocity Z", 0.0f);  
+        }
     }
 
     private void PerformRotation()
     {
-        if (movement != Vector3.zero)
+        float xRot = movement.z * 8.0f;
+        float yRot = movement.x * 70.0f;
+
+        ragdollRigidbody.MoveRotation(Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(xRot, yRot, 0), turnSpeed));
+    }
+
+    private float GetGroundTargetHeight()
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(new Ray(ragdollHipsTransform.position, Vector3.down), out hit, Mathf.Infinity, groundMask))
         {
-            transform.localRotation = Quaternion.Lerp(transform.localRotation, Quaternion.LookRotation(movement), Time.deltaTime * rotationSpeed);
+            return hit.point.y + TARGET_DISTANCE_TO_GROUND;
         }
+
+        return float.MaxValue;
+
     }
 
 }
