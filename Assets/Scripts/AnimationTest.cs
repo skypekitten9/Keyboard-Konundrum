@@ -5,7 +5,9 @@ using UnityEngine;
 public class AnimationTest : MonoBehaviour
 {
     Animator animator;
-    float velocity = 0f;
+    float velocityZ = 0f;
+    float velocityX = 0f;
+    bool standing = false;
     public float acceleration;
 
     // Start is called before the first frame update
@@ -17,16 +19,34 @@ public class AnimationTest : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKey(KeyCode.P))
+        if (Input.GetKey(KeyCode.I))
         {
-            velocity += Time.deltaTime * acceleration;
-            if (velocity > 1) velocity = 1;
+            velocityZ += Time.deltaTime * acceleration;
+            if (velocityZ > 2) velocityZ = 2;
         }
-        else
+        else if (Input.GetKey(KeyCode.K))
         {
-            velocity -= Time.deltaTime * acceleration;
-            if (velocity < 0) velocity = 0;
+            velocityZ -= Time.deltaTime * acceleration;
+            if (velocityZ < -2) velocityZ = -2;
         }
-        animator.SetFloat("Velocity", velocity);
+        animator.SetFloat("Velocity Z", velocityZ);
+
+        if(Input.GetKey(KeyCode.L))
+        {
+            velocityX += Time.deltaTime * acceleration;
+            if (velocityX > 2) velocityX = 2;
+        }
+        else if(Input.GetKey(KeyCode.J))
+        {
+            velocityX -= Time.deltaTime * acceleration;
+            if (velocityX < -2) velocityX = -2;
+        }
+        animator.SetFloat("Velocity X", velocityX);
+
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            standing = !standing;
+            animator.SetBool("Standing", standing);
+        }
     }
 }
