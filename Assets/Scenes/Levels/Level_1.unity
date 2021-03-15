@@ -621,6 +621,14 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1045329132360603170, guid: e4fb18408eb868a4093f265d0fb26f34, type: 3}
+      propertyPath: m_IsTrigger
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1045329132360603171, guid: e4fb18408eb868a4093f265d0fb26f34, type: 3}
+      propertyPath: m_IsTrigger
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1045329132828344560, guid: e4fb18408eb868a4093f265d0fb26f34, type: 3}
       propertyPath: m_Name
       value: Goal
@@ -834,7 +842,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1821811841}
   m_LocalRotation: {x: -0, y: -0.70710576, z: -0, w: 0.70710784}
-  m_LocalPosition: {x: 835.70715, y: -2.6900024, z: -833.99}
+  m_LocalPosition: {x: 835.70715, y: -2.61, z: -833.99}
   m_LocalScale: {x: 20.667107, y: 4.953488, z: 4.538016}
   m_Children: []
   m_Father: {fileID: 0}
