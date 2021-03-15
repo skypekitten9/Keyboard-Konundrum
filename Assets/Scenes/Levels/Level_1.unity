@@ -903,6 +903,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 9147228496493830487, guid: 4f2dc3ed07512e34ab9735ce3446d148, type: 3}
+      propertyPath: orthographic size
+      value: 6.97
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4f2dc3ed07512e34ab9735ce3446d148, type: 3}
 --- !u!1001 &6247838156188519452
@@ -912,6 +916,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 6247838155768728592, guid: 2d599da7328bfee429ff3d70e41567a9, type: 3}
+      propertyPath: m_UiScaleMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6247838155768728592, guid: 2d599da7328bfee429ff3d70e41567a9, type: 3}
+      propertyPath: m_ReferenceResolution.x
+      value: 960
+      objectReference: {fileID: 0}
+    - target: {fileID: 6247838155768728592, guid: 2d599da7328bfee429ff3d70e41567a9, type: 3}
+      propertyPath: m_ReferenceResolution.y
+      value: 800
+      objectReference: {fileID: 0}
     - target: {fileID: 6247838156121596121, guid: 2d599da7328bfee429ff3d70e41567a9, type: 3}
       propertyPath: m_LocalPosition.x
       value: 834.99805
@@ -959,6 +975,30 @@ PrefabInstance:
     - target: {fileID: 6247838156121596127, guid: 2d599da7328bfee429ff3d70e41567a9, type: 3}
       propertyPath: m_Name
       value: GameManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 6247838156499890385, guid: 2d599da7328bfee429ff3d70e41567a9, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.91586
+      objectReference: {fileID: 0}
+    - target: {fileID: 6247838156499890385, guid: 2d599da7328bfee429ff3d70e41567a9, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.91586
+      objectReference: {fileID: 0}
+    - target: {fileID: 6247838156499890385, guid: 2d599da7328bfee429ff3d70e41567a9, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.91586
+      objectReference: {fileID: 0}
+    - target: {fileID: 6247838156675624756, guid: 2d599da7328bfee429ff3d70e41567a9, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.91586
+      objectReference: {fileID: 0}
+    - target: {fileID: 6247838156675624756, guid: 2d599da7328bfee429ff3d70e41567a9, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.91586
+      objectReference: {fileID: 0}
+    - target: {fileID: 6247838156675624756, guid: 2d599da7328bfee429ff3d70e41567a9, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.91586
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2d599da7328bfee429ff3d70e41567a9, type: 3}
