@@ -15,9 +15,10 @@ public class PlayerController : MonoBehaviour
     private Animator animator;
 
     const float TARGET_DISTANCE_TO_GROUND = 0.16f;
+    private float fallHeight = 1.5f;
+
 
     [SerializeField] private LayerMask groundMask;
-
 
     private bool ragdollMode = false;
     private bool canChangeMode = true;
@@ -40,8 +41,8 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Return))
-            StartCoroutine(ToggleRagdollMode());
+        //if (Input.GetKeyDown(KeyCode.Return))
+        //    StartCoroutine(ToggleRagdollMode());
 
         movement.x = -Input.GetAxisRaw("Vertical");
         movement.z = Input.GetAxisRaw("Horizontal");
@@ -53,7 +54,7 @@ public class PlayerController : MonoBehaviour
     {
         if (ragdollMode == false && canChangeMode == true)    //launch ragdoll
         {
-            if (ragdollHipsRigidbody.velocity.y > 3.0f || transform.position.y - GetGroundTargetHeight() > 1.5f)
+            if (ragdollHipsRigidbody.velocity.y > 3.0f || transform.position.y - GetGroundTargetHeight() >= fallHeight)
             {
                 StartCoroutine(ToggleRagdollMode(0.0f, 2.0f));
                 return;
@@ -108,12 +109,12 @@ public class PlayerController : MonoBehaviour
     private float GetGroundTargetHeight()
     {
         RaycastHit hit;
-        if (Physics.Raycast(new Ray(ragdollHipsTransform.position, Vector3.down), out hit, Mathf.Infinity, groundMask))
+        if (Physics.Raycast(new Ray(ragdollHipsTransform.position, Vector3.down), out hit, fallHeight * 2, groundMask))
         {
             return hit.point.y + TARGET_DISTANCE_TO_GROUND;
         }
 
-        return float.MaxValue;
+        return -fallHeight;
     }
 
     private bool IsGrounded()
