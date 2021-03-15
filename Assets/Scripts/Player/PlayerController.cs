@@ -51,13 +51,18 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (ragdollMode == false && canChangeMode == true && ragdollHipsRigidbody.velocity.y > 3.0f)    //launch ragdoll
+        if (ragdollMode == false && canChangeMode == true)    //launch ragdoll
         {
-            StartCoroutine(ToggleRagdollMode(0.0f, 2.0f));
+            if (ragdollHipsRigidbody.velocity.y > 3.0f || transform.position.y - GetGroundTargetHeight() > 1.5f)
+            {
+                StartCoroutine(ToggleRagdollMode(0.0f, 2.0f));
+                return;
+            }
         }
         else if (ragdollMode == true && canChangeMode == true && IsGrounded())      //get up from ground
         {
-            StartCoroutine(ToggleRagdollMode(1.0f, 2.0f)); 
+            StartCoroutine(ToggleRagdollMode(1.0f, 2.0f));
+            return;
         }
 
         Debug.Log($"Ragdoll vel_y= {ragdollHipsRigidbody.velocity.y}");
