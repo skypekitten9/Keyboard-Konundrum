@@ -34,9 +34,11 @@ public class GameManager : MonoBehaviour
         switch (winType)
         {
             case WinType.Player:
+                transform.GetChild(0).GetChild(0).gameObject.SetActive(true);
                 StartCoroutine(FinializeGame(playerColor));
                 break;
             case WinType.Keyboard:
+                transform.GetChild(0).GetChild(1).gameObject.SetActive(true);
                 StartCoroutine(FinializeGame(keyboardColor));
                 break;
             default:
