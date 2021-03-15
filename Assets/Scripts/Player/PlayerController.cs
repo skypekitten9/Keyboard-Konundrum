@@ -1,6 +1,4 @@
-﻿#define DEBUG
-//#undef DEBUG
-
+﻿using System.Collections;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -20,6 +18,7 @@ public class PlayerController : MonoBehaviour
 
 
     private bool ragdollMode = false;
+    private bool canChangeMode = true;
 
 
     private void Awake()
@@ -33,7 +32,7 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Return))
-            ToggleRagdollMode();
+            StartCoroutine(ToggleRagdollMode());
 
         movement.x = Input.GetAxisRaw("Horizontal");
         movement.z = Input.GetAxisRaw("Vertical");
@@ -49,9 +48,13 @@ public class PlayerController : MonoBehaviour
             PerformMovement();
         }
 
-#if DEBUG
-        Debug.Log($"Ragdoll vel= {ragdollRigidbody.velocity.magnitude}");
-#endif
+
+        //if (ragdollMode == false && canChangeMode && ragdollRigidbody.velocity.magnitude > 9.0f)
+        //{
+        //    StartCoroutine(ToggleRagdollMode());
+        //}
+
+        //Debug.Log($"Ragdoll vel= {ragdollRigidbody.velocity.magnitude}");
     }
 
 
@@ -131,11 +134,17 @@ public class PlayerController : MonoBehaviour
     }
 
 
-    private void ToggleRagdollMode()
+    private IEnumerator ToggleRagdollMode()
     {
+        canChangeMode = false;
         ragdollMode = !ragdollMode;
+
         ragdollRigidbody.isKinematic = !ragdollMode;
         animator.enabled = !ragdollMode;
+
+        yield return new WaitForSeconds(2.0f);
+
+        canChangeMode = true;
     }
 
 }

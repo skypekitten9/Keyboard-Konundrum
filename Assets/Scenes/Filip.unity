@@ -457,7 +457,7 @@ Camera:
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 1847
+    m_Bits: 3895
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -490,49 +490,13 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1016356481, guid: 1ba3f8f15fe928947a98d59ed0d82de7, type: 3}
-      propertyPath: m_ConnectedAnchor.z
-      value: 0.00000011362136
-      objectReference: {fileID: 0}
-    - target: {fileID: 1016356490, guid: 1ba3f8f15fe928947a98d59ed0d82de7, type: 3}
-      propertyPath: m_ConnectedAnchor.x
-      value: -0.0000000055494374
-      objectReference: {fileID: 0}
-    - target: {fileID: 1016356494, guid: 1ba3f8f15fe928947a98d59ed0d82de7, type: 3}
-      propertyPath: m_ConnectedAnchor.z
-      value: 0.00000037625432
-      objectReference: {fileID: 0}
-    - target: {fileID: 1016356502, guid: 1ba3f8f15fe928947a98d59ed0d82de7, type: 3}
-      propertyPath: m_ConnectedAnchor.x
-      value: -0.00000023635377
-      objectReference: {fileID: 0}
-    - target: {fileID: 1016356507, guid: 1ba3f8f15fe928947a98d59ed0d82de7, type: 3}
-      propertyPath: m_ConnectedAnchor.z
-      value: 0.002861563
-      objectReference: {fileID: 0}
-    - target: {fileID: 1016356512, guid: 1ba3f8f15fe928947a98d59ed0d82de7, type: 3}
-      propertyPath: m_ConnectedAnchor.z
-      value: -0.015995594
-      objectReference: {fileID: 0}
-    - target: {fileID: 1016356516, guid: 1ba3f8f15fe928947a98d59ed0d82de7, type: 3}
-      propertyPath: m_ConnectedAnchor.z
-      value: 0.0028464266
-      objectReference: {fileID: 0}
-    - target: {fileID: 1016356521, guid: 1ba3f8f15fe928947a98d59ed0d82de7, type: 3}
-      propertyPath: m_ConnectedAnchor.z
-      value: -0.015995556
-      objectReference: {fileID: 0}
-    - target: {fileID: 1016356523, guid: 1ba3f8f15fe928947a98d59ed0d82de7, type: 3}
-      propertyPath: m_ConnectedAnchor.x
-      value: 0.00000007727291
-      objectReference: {fileID: 0}
     - target: {fileID: 8123716504937292765, guid: 1ba3f8f15fe928947a98d59ed0d82de7, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8123716504937292765, guid: 1ba3f8f15fe928947a98d59ed0d82de7, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.291
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 8123716504937292765, guid: 1ba3f8f15fe928947a98d59ed0d82de7, type: 3}
       propertyPath: m_LocalPosition.z
@@ -573,10 +537,6 @@ PrefabInstance:
     - target: {fileID: 8123716504937292766, guid: 1ba3f8f15fe928947a98d59ed0d82de7, type: 3}
       propertyPath: m_Name
       value: Player
-      objectReference: {fileID: 0}
-    - target: {fileID: 8970137807876066275, guid: 1ba3f8f15fe928947a98d59ed0d82de7, type: 3}
-      propertyPath: m_Name
-      value: Ragdoll
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1ba3f8f15fe928947a98d59ed0d82de7, type: 3}
