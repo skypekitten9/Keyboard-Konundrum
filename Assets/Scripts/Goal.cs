@@ -11,12 +11,7 @@ public class Goal : MonoBehaviour
         {
             transform.GetComponent<Rigidbody>().isKinematic = false;
             gameOver = true;
-            Win();
+            GameManager.Instance.Win(WinType.Player);
         }
-    }
-
-    private void Win()
-    {
-        Debug.Log("You just won the game!");
     }
 }

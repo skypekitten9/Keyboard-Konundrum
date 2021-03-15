@@ -8,7 +8,6 @@ public class DeathTrigger : MonoBehaviour
 {
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Death triggered - reloading scene...");
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        GameManager.Instance.Win(WinType.Keyboard);
     }
 }
