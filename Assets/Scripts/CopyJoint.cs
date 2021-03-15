@@ -6,7 +6,7 @@ public class CopyJoint : MonoBehaviour
 {
     [SerializeField] private Transform targetLimb;
     private ConfigurableJoint configJoint;
-    private bool active;
+    private bool active = false;
     private float initialPositionSpringX;
     private float initialPositionSpringYZ;
 
@@ -26,29 +26,25 @@ public class CopyJoint : MonoBehaviour
         this.targetInitialRotation = this.targetLimb.transform.localRotation;
     }
 
-    private void Update()
+    public void ToggleJointMotion()
     {
-        if (Input.GetKeyDown(KeyCode.Return))
+        active = !active;
+        if (active)
         {
-            active = !active;
-            if (active)
-            {
-                jointDriveX.positionSpring = initialPositionSpringX;
-                jointDriveYZ.positionSpring = initialPositionSpringYZ;
-                configJoint.angularXMotion = ConfigurableJointMotion.Free;
-                configJoint.angularYMotion = ConfigurableJointMotion.Free;
-                configJoint.angularZMotion = ConfigurableJointMotion.Free;
-            }
-            else
-            {
-                jointDriveX.positionSpring = 0;
-                jointDriveYZ.positionSpring = 0;
-                configJoint.angularXMotion = ConfigurableJointMotion.Limited;
-                configJoint.angularYMotion = ConfigurableJointMotion.Limited;
-                configJoint.angularZMotion = ConfigurableJointMotion.Limited;
-            }
+            jointDriveX.positionSpring = initialPositionSpringX;
+            jointDriveYZ.positionSpring = initialPositionSpringYZ;
+            configJoint.angularXMotion = ConfigurableJointMotion.Free;
+            configJoint.angularYMotion = ConfigurableJointMotion.Free;
+            configJoint.angularZMotion = ConfigurableJointMotion.Free;
         }
-        
+        else
+        {
+            jointDriveX.positionSpring = 0;
+            jointDriveYZ.positionSpring = 0;
+            configJoint.angularXMotion = ConfigurableJointMotion.Limited;
+            configJoint.angularYMotion = ConfigurableJointMotion.Limited;
+            configJoint.angularZMotion = ConfigurableJointMotion.Limited;
+        }
     }
 
     private void FixedUpdate()

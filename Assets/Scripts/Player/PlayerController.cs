@@ -10,6 +10,8 @@ public class PlayerController : MonoBehaviour
 
     private Rigidbody ragdollRigidbody;
     private Transform ragdollHipsTransform;
+    private Rigidbody ragdollHipsRigidbody;
+
     private Animator animator;
 
     const float TARGET_DISTANCE_TO_GROUND = 0.16f;
@@ -21,11 +23,18 @@ public class PlayerController : MonoBehaviour
     private bool canChangeMode = true;
 
 
+    CopyJoint[] copyJoints;
+
+
+
     private void Awake()
     {
         ragdollRigidbody = GetComponent<Rigidbody>();
         ragdollHipsTransform = transform.GetChild(2).transform;
+        ragdollHipsRigidbody = ragdollHipsTransform.GetComponent<Rigidbody>();
         animator = transform.parent.GetComponentInChildren<Animator>();
+
+        copyJoints = GetComponentsInChildren<CopyJoint>();
     }
 
 
@@ -42,55 +51,24 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (ragdollMode == false && canChangeMode == true && ragdollHipsRigidbody.velocity.y > 3.0f)    //launch ragdoll
+        {
+            StartCoroutine(ToggleRagdollMode(0.0f, 2.0f));
+        }
+        else if (ragdollMode == true && canChangeMode == true && IsGrounded())      //get up from ground
+        {
+            StartCoroutine(ToggleRagdollMode(1.0f, 2.0f)); 
+        }
+
+        Debug.Log($"Ragdoll vel_y= {ragdollHipsRigidbody.velocity.y}");
+
+
         if (ragdollMode == false)
         {
             PerformRotation();
             PerformMovement();
         }
-
-
-        //if (ragdollMode == false && canChangeMode && ragdollRigidbody.velocity.magnitude > 9.0f)
-        //{
-        //    StartCoroutine(ToggleRagdollMode());
-        //}
-
-        //Debug.Log($"Ragdoll vel= {ragdollRigidbody.velocity.magnitude}");
     }
-
-
-
-    /*private IEnumerator ToggleRagdollPhysics()
-    {
-        ragdollEnabled = !ragdollEnabled;
-        ragdollRigidbody.isKinematic = !ragdollEnabled;
-        animator.enabled = !ragdollEnabled;
-
-        if (!ragdollEnabled)
-        {
-            Vector3 playerPos = transform.position;
-            Vector3 playerTargetPos = ragdollhipsTransform.position;
-
-            Vector3 ragdollPos = ragdollTransform.localPosition;
-            Vector3 ragdollTargetPos = Vector3.zero;
-
-            Quaternion ragdollRot = ragdollTransform.rotation;
-            Quaternion ragdollTargetRot = gameObject.transform.rotation;
-
-
-            int frames = 60;
-            for (float i = 1; i <= frames; i++)
-            {
-                transform.position = Vector3.Lerp(playerPos, playerTargetPos, i / frames);
-                ragdollTransform.localPosition = Vector3.Lerp(ragdollPos, ragdollTargetPos, i / frames);
-                ragdollTransform.rotation = Quaternion.Lerp(ragdollRot, ragdollTargetRot, i / frames);
-                yield return new WaitForFixedUpdate();
-            }
-
-            transform.position = playerTargetPos;
-            ragdollTransform.localPosition = ragdollTargetPos;
-            ragdollTransform.rotation = ragdollTargetRot;
-        }
-    }*/
 
 
     private void PerformMovement()
@@ -109,8 +87,8 @@ public class PlayerController : MonoBehaviour
         {
             //Stops the walking animation when walking into walls.
             // OBS: This feature is optional!
-            animator.SetFloat("Velocity X", 0.0f);
-            animator.SetFloat("Velocity Z", 0.0f);
+            //animator.SetFloat("Velocity X", 0.0f);
+            //animator.SetFloat("Velocity Z", 0.0f);
         }
     }
 
@@ -133,17 +111,34 @@ public class PlayerController : MonoBehaviour
         return float.MaxValue;
     }
 
+    private bool IsGrounded()
+    {
+        return Physics.Raycast(new Ray(ragdollHipsTransform.position, Vector3.down), 0.3f, groundMask);
+    }
 
-    private IEnumerator ToggleRagdollMode()
+
+    private IEnumerator ToggleRagdollMode(float delayBefore = 0.0f, float delayAfter = 0.0f)
     {
         canChangeMode = false;
-        ragdollMode = !ragdollMode;
+        yield return new WaitForSeconds(delayBefore);
 
+        if (ragdollMode && IsGrounded() == false)
+        {
+            yield return new WaitForSeconds(delayAfter);
+            canChangeMode = true;
+            yield break;
+        }
+
+        ragdollMode = !ragdollMode;
         ragdollRigidbody.isKinematic = !ragdollMode;
         animator.enabled = !ragdollMode;
 
-        yield return new WaitForSeconds(2.0f);
+        foreach (CopyJoint cj in copyJoints)
+        {
+            cj.ToggleJointMotion();
+        }
 
+        yield return new WaitForSeconds(delayAfter);
         canChangeMode = true;
     }
 
