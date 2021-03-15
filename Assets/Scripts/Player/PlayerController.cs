@@ -43,8 +43,8 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Return))
             StartCoroutine(ToggleRagdollMode());
 
-        movement.x = Input.GetAxisRaw("Horizontal");
-        movement.z = Input.GetAxisRaw("Vertical");
+        movement.x = -Input.GetAxisRaw("Vertical");
+        movement.z = Input.GetAxisRaw("Horizontal");
         movement.Normalize();
     }
 
