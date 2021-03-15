@@ -1588,13 +1588,13 @@ ConfigurableJoint:
   m_RotationDriveMode: 0
   m_AngularXDrive:
     serializedVersion: 3
-    positionSpring: 9000
-    positionDamper: 7000
+    positionSpring: 12000
+    positionDamper: 5000
     maximumForce: 3.4028233e+38
   m_AngularYZDrive:
     serializedVersion: 3
-    positionSpring: 9000
-    positionDamper: 3000
+    positionSpring: 12000
+    positionDamper: 5000
     maximumForce: 3.4028233e+38
   m_SlerpDrive:
     serializedVersion: 3

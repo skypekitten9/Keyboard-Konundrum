@@ -490,6 +490,22 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1016356523, guid: 1ba3f8f15fe928947a98d59ed0d82de7, type: 3}
+      propertyPath: m_AngularXDrive.positionDamper
+      value: 5000
+      objectReference: {fileID: 0}
+    - target: {fileID: 1016356523, guid: 1ba3f8f15fe928947a98d59ed0d82de7, type: 3}
+      propertyPath: m_AngularYZDrive.positionDamper
+      value: 5000
+      objectReference: {fileID: 0}
+    - target: {fileID: 1016356523, guid: 1ba3f8f15fe928947a98d59ed0d82de7, type: 3}
+      propertyPath: m_AngularYZDrive.positionSpring
+      value: 12000
+      objectReference: {fileID: 0}
+    - target: {fileID: 1016356523, guid: 1ba3f8f15fe928947a98d59ed0d82de7, type: 3}
+      propertyPath: m_AngularXDrive.positionSpring
+      value: 12000
+      objectReference: {fileID: 0}
     - target: {fileID: 8123716504937292765, guid: 1ba3f8f15fe928947a98d59ed0d82de7, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
