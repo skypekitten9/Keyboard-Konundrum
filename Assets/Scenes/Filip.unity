@@ -476,7 +476,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1167695263}
-  m_LocalRotation: {x: 0.38268343, y: 0, z: 0, w: 0.92387956}
+  m_LocalRotation: {x: 0.38268343, y: 0, z: 0, w: 0.9238795}
   m_LocalPosition: {x: -0.23, y: 10.62, z: -6.29}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -490,25 +490,41 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1016356523, guid: 1ba3f8f15fe928947a98d59ed0d82de7, type: 3}
-      propertyPath: m_AngularXDrive.positionSpring
-      value: 9000
+    - target: {fileID: 1016356481, guid: 1ba3f8f15fe928947a98d59ed0d82de7, type: 3}
+      propertyPath: m_ConnectedAnchor.z
+      value: 0.00000011362136
+      objectReference: {fileID: 0}
+    - target: {fileID: 1016356490, guid: 1ba3f8f15fe928947a98d59ed0d82de7, type: 3}
+      propertyPath: m_ConnectedAnchor.x
+      value: -0.0000000055494374
+      objectReference: {fileID: 0}
+    - target: {fileID: 1016356494, guid: 1ba3f8f15fe928947a98d59ed0d82de7, type: 3}
+      propertyPath: m_ConnectedAnchor.z
+      value: 0.00000037625432
+      objectReference: {fileID: 0}
+    - target: {fileID: 1016356502, guid: 1ba3f8f15fe928947a98d59ed0d82de7, type: 3}
+      propertyPath: m_ConnectedAnchor.x
+      value: -0.00000023635377
+      objectReference: {fileID: 0}
+    - target: {fileID: 1016356507, guid: 1ba3f8f15fe928947a98d59ed0d82de7, type: 3}
+      propertyPath: m_ConnectedAnchor.z
+      value: 0.002861563
+      objectReference: {fileID: 0}
+    - target: {fileID: 1016356512, guid: 1ba3f8f15fe928947a98d59ed0d82de7, type: 3}
+      propertyPath: m_ConnectedAnchor.z
+      value: -0.015995594
+      objectReference: {fileID: 0}
+    - target: {fileID: 1016356516, guid: 1ba3f8f15fe928947a98d59ed0d82de7, type: 3}
+      propertyPath: m_ConnectedAnchor.z
+      value: 0.0028464266
+      objectReference: {fileID: 0}
+    - target: {fileID: 1016356521, guid: 1ba3f8f15fe928947a98d59ed0d82de7, type: 3}
+      propertyPath: m_ConnectedAnchor.z
+      value: -0.015995556
       objectReference: {fileID: 0}
     - target: {fileID: 1016356523, guid: 1ba3f8f15fe928947a98d59ed0d82de7, type: 3}
-      propertyPath: m_AngularYZDrive.positionSpring
-      value: 9000
-      objectReference: {fileID: 0}
-    - target: {fileID: 1016356523, guid: 1ba3f8f15fe928947a98d59ed0d82de7, type: 3}
-      propertyPath: m_AngularXDrive.positionDamper
-      value: 7000
-      objectReference: {fileID: 0}
-    - target: {fileID: 1016356523, guid: 1ba3f8f15fe928947a98d59ed0d82de7, type: 3}
-      propertyPath: m_AngularYZDrive.positionDamper
-      value: 3000
-      objectReference: {fileID: 0}
-    - target: {fileID: 1332610635, guid: 1ba3f8f15fe928947a98d59ed0d82de7, type: 3}
-      propertyPath: turnSpeed
-      value: 7
+      propertyPath: m_ConnectedAnchor.x
+      value: 0.00000007727291
       objectReference: {fileID: 0}
     - target: {fileID: 8123716504937292765, guid: 1ba3f8f15fe928947a98d59ed0d82de7, type: 3}
       propertyPath: m_LocalPosition.x
@@ -516,7 +532,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8123716504937292765, guid: 1ba3f8f15fe928947a98d59ed0d82de7, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.291
       objectReference: {fileID: 0}
     - target: {fileID: 8123716504937292765, guid: 1ba3f8f15fe928947a98d59ed0d82de7, type: 3}
       propertyPath: m_LocalPosition.z
@@ -528,7 +544,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8123716504937292765, guid: 1ba3f8f15fe928947a98d59ed0d82de7, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.70710576
+      value: -0.000000014901161
       objectReference: {fileID: 0}
     - target: {fileID: 8123716504937292765, guid: 1ba3f8f15fe928947a98d59ed0d82de7, type: 3}
       propertyPath: m_LocalRotation.z
@@ -536,7 +552,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8123716504937292765, guid: 1ba3f8f15fe928947a98d59ed0d82de7, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.70710784
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8123716504937292765, guid: 1ba3f8f15fe928947a98d59ed0d82de7, type: 3}
       propertyPath: m_RootOrder
@@ -548,7 +564,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8123716504937292765, guid: 1ba3f8f15fe928947a98d59ed0d82de7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 90
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8123716504937292765, guid: 1ba3f8f15fe928947a98d59ed0d82de7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
@@ -557,6 +573,10 @@ PrefabInstance:
     - target: {fileID: 8123716504937292766, guid: 1ba3f8f15fe928947a98d59ed0d82de7, type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 8970137807876066275, guid: 1ba3f8f15fe928947a98d59ed0d82de7, type: 3}
+      propertyPath: m_Name
+      value: Ragdoll
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1ba3f8f15fe928947a98d59ed0d82de7, type: 3}

@@ -1,5 +1,5 @@
 ﻿#define DEBUG
-#undef DEBUG
+//#undef DEBUG
 
 using UnityEngine;
 
@@ -19,6 +19,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private LayerMask groundMask;
 
 
+    private bool ragdollMode = false;
+
 
     private void Awake()
     {
@@ -30,27 +32,22 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        //if (Input.GetKeyDown(KeyCode.Return))
-        //    StartCoroutine(ToggleRagdollPhysics());
+        if (Input.GetKeyDown(KeyCode.Return))
+            ToggleRagdollMode();
 
-        if (true)
-        {
-            movement.x = Input.GetAxisRaw("Horizontal");
-            movement.z = Input.GetAxisRaw("Vertical");
-            movement.Normalize();
-        }
+        movement.x = Input.GetAxisRaw("Horizontal");
+        movement.z = Input.GetAxisRaw("Vertical");
+        movement.Normalize();
     }
+
 
     private void FixedUpdate()
     {
-        PerformRotation();
-        PerformMovement();
-
-        //Vector3 hipsOffset = new Vector3(ragdollHipsTransform.localPosition.x, 0.0f, ragdollHipsTransform.localPosition.z);
-        //if (hipsOffset.magnitude > 0.6f && ragdollRigidbody.isKinematic == true)
-        //{
-        //    StartCoroutine(WallPositionReset());
-        //}
+        if (ragdollMode == false)
+        {
+            PerformRotation();
+            PerformMovement();
+        }
 
 #if DEBUG
         Debug.Log($"Ragdoll vel= {ragdollRigidbody.velocity.magnitude}");
@@ -58,16 +55,8 @@ public class PlayerController : MonoBehaviour
     }
 
 
-    //private IEnumerator WallPositionReset()
-    //{
-    //    ragdollRigidbody.isKinematic = false;
-    //    yield return new WaitForFixedUpdate();
-    //    ragdollRigidbody.isKinematic = true;
-    //}
 
-
-    /*
-    private IEnumerator ToggleRagdollPhysics()
+    /*private IEnumerator ToggleRagdollPhysics()
     {
         ragdollEnabled = !ragdollEnabled;
         ragdollRigidbody.isKinematic = !ragdollEnabled;
@@ -98,8 +87,8 @@ public class PlayerController : MonoBehaviour
             ragdollTransform.localPosition = ragdollTargetPos;
             ragdollTransform.rotation = ragdollTargetRot;
         }
-    }
-    */
+    }*/
+
 
     private void PerformMovement()
     {
@@ -117,8 +106,8 @@ public class PlayerController : MonoBehaviour
         {
             //Stops the walking animation when walking into walls.
             // OBS: This feature is optional!
-            animator.SetFloat("Velocity X", 0.0f);  
-            animator.SetFloat("Velocity Z", 0.0f);  
+            animator.SetFloat("Velocity X", 0.0f);
+            animator.SetFloat("Velocity Z", 0.0f);
         }
     }
 
@@ -139,7 +128,14 @@ public class PlayerController : MonoBehaviour
         }
 
         return float.MaxValue;
+    }
 
+
+    private void ToggleRagdollMode()
+    {
+        ragdollMode = !ragdollMode;
+        ragdollRigidbody.isKinematic = !ragdollMode;
+        animator.enabled = !ragdollMode;
     }
 
 }
