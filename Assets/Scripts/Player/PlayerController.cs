@@ -52,7 +52,7 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (ragdollMode == false && canChangeMode == true)    //launch ragdoll
+        if (ragdollMode == false && canChangeMode == true)    //enable ragdoll
         {
             if (ragdollHipsRigidbody.velocity.y > 3.0f || transform.position.y - GetGroundTargetHeight() >= fallHeight)
             {
@@ -66,7 +66,7 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        Debug.Log($"Ragdoll vel_y= {ragdollHipsRigidbody.velocity.y}");
+        //Debug.Log($"Ragdoll vel_y= {ragdollHipsRigidbody.velocity.y}");
 
 
         if (ragdollMode == false)
@@ -119,7 +119,7 @@ public class PlayerController : MonoBehaviour
 
     private bool IsGrounded()
     {
-        return Physics.Raycast(new Ray(ragdollHipsTransform.position, Vector3.down), 0.3f, groundMask);
+        return Physics.Raycast(new Ray(ragdollHipsTransform.position, Vector3.down), 0.4f, groundMask);
     }
 
 
