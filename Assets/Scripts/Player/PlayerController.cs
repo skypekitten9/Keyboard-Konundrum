@@ -5,6 +5,7 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] private float maxSpeed = 5.0f;
     [SerializeField] private float turnSpeed = 3.0f;
+    [SerializeField] private float ragdollLaunchMagnitude = 1.0f;
 
     private Vector3 movement = Vector3.zero;
 
@@ -47,6 +48,11 @@ public class PlayerController : MonoBehaviour
         movement.x = -Input.GetAxisRaw("Vertical");
         movement.z = Input.GetAxisRaw("Horizontal");
         movement.Normalize();
+
+        if (Input.GetKeyDown(KeyCode.Keypad0) && ragdollMode == false)
+        {
+            RagdollLaunch();
+        }
     }
 
 
@@ -146,6 +152,14 @@ public class PlayerController : MonoBehaviour
 
         yield return new WaitForSeconds(delayAfter);
         canChangeMode = true;
+    }
+
+
+    private void RagdollLaunch()
+    {
+        Vector3 launchDirection = (movement + Vector3.up).normalized;
+        Vector3 launchForce = ragdollLaunchMagnitude * launchDirection;
+        ragdollRigidbody.AddForce(launchForce, ForceMode.Acceleration);
     }
 
 }
