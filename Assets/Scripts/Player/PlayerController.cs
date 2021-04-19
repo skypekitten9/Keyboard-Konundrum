@@ -5,7 +5,7 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] private float maxSpeed = 5.0f;
     [SerializeField] private float turnSpeed = 3.0f;
-    [SerializeField] private float ragdollLaunchMagnitude = 1.0f;
+    [SerializeField] private float ragdollLaunchMagnitude = 300.0f;
 
     private Vector3 movement = Vector3.zero;
 
@@ -49,7 +49,7 @@ public class PlayerController : MonoBehaviour
         movement.z = Input.GetAxisRaw("Horizontal");
         movement.Normalize();
 
-        if (Input.GetKeyDown(KeyCode.Keypad0) && ragdollMode == false)
+        if (Input.GetKeyDown(KeyCode.RightControl) && ragdollMode == false && canChangeMode == true)
         {
             RagdollLaunch();
         }
@@ -60,7 +60,7 @@ public class PlayerController : MonoBehaviour
     {
         if (ragdollMode == false && canChangeMode == true)    //enable ragdoll
         {
-            if (ragdollHipsRigidbody.velocity.y > 3.0f || transform.position.y - GetGroundTargetHeight() >= fallHeight)
+            if (ragdollHipsRigidbody.velocity.y > 7.0f || transform.position.y - GetGroundTargetHeight() >= fallHeight)
             {
                 StartCoroutine(ToggleRagdollMode(0.0f, 2.0f));
                 return;
@@ -157,9 +157,13 @@ public class PlayerController : MonoBehaviour
 
     private void RagdollLaunch()
     {
-        Vector3 launchDirection = (movement + Vector3.up).normalized;
+        ragdollRigidbody.isKinematic = false;
+        StartCoroutine(ToggleRagdollMode(0.0f, 2.0f));
+
+        Vector3 launchDirection = (movement + Vector3.up * 2).normalized;
         Vector3 launchForce = ragdollLaunchMagnitude * launchDirection;
-        ragdollRigidbody.AddForce(launchForce, ForceMode.Acceleration);
+
+        ragdollRigidbody.AddForce(launchForce, ForceMode.VelocityChange);
     }
 
 }
