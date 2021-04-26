@@ -13,7 +13,7 @@ public abstract class Action : MonoBehaviour
     [SerializeField] private float valueChangeSpeed = 1.0f;
     [SerializeField] private Vector2 clamp = new Vector2(0, 1);
 
-    protected KeyCode key;
+    protected KeyCode keyCode;
 
     private Stopwatch stopwatch = new Stopwatch();
     [SerializeField] private float timerLength = 2000.0f;
@@ -29,7 +29,7 @@ public abstract class Action : MonoBehaviour
 
     protected virtual void Initialize()
     {
-        key = GetComponent<Tile>().Key;
+        keyCode = GetComponentInParent<KB_Key>().KeyCode;
     }
 
     private void Update()
@@ -47,13 +47,13 @@ public abstract class Action : MonoBehaviour
         {
             case InteractionType.Hold:
                 {
-                    activated = Input.GetKey(key);
+                    activated = Input.GetKey(keyCode);
                 }
                 break;
 
             case InteractionType.Toggle:
                 {
-                    if (Input.GetKeyDown(key))
+                    if (Input.GetKeyDown(keyCode))
                     {
                         activated = !activated;
                     }
@@ -62,7 +62,7 @@ public abstract class Action : MonoBehaviour
 
             case InteractionType.Timer:
                 {
-                    if (Input.GetKeyDown(key) && activated == false)
+                    if (Input.GetKeyDown(keyCode) && activated == false)
                     {
                         stopwatch.Restart();
                         activated = true;
@@ -80,7 +80,7 @@ public abstract class Action : MonoBehaviour
                 {
                     activated = false;
 
-                    if (Input.GetKeyDown(key))
+                    if (Input.GetKeyDown(keyCode))
                     {
                         value = Mathf.Clamp(value += Time.deltaTime * tapChangeSpeed, clamp.x, clamp.y);
                     }

@@ -23,6 +23,8 @@ public class Keyboard_Editor : Editor
         {        
             EditorGUILayout.PropertyField(keyBasePrefab);
 
+            EditorGUILayout.Separator();
+
             if (GUILayout.Button("Generate Keyboard"))
             {
                 keyboard.Generate();
