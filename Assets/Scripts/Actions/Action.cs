@@ -1,19 +1,22 @@
 ﻿using System.Diagnostics;
 using UnityEngine;
-using static Enums;
+
 
 [RequireComponent(typeof(Rigidbody))]
 public abstract class Action : MonoBehaviour
 {
-    [SerializeField] protected InteractionType interactionType;
+    [SerializeField] private InteractionType interactionType;
+    public InteractionType InteractionType { get { return interactionType; } }
 
+    protected KeyCode keyCode;
     protected bool activated = false;
 
     protected float value = 0f;
-    [SerializeField] private float valueChangeSpeed = 1.0f;
-    [SerializeField] private Vector2 clamp = new Vector2(0, 1);
 
-    protected KeyCode keyCode;
+
+    [SerializeField] private float valueChangeSpeed = 1.0f;
+    [SerializeField] private Vector2 valueClamp = new Vector2(0, 1);
+
 
     private Stopwatch stopwatch = new Stopwatch();
     [SerializeField] private float timerLength = 2000.0f;
@@ -43,7 +46,7 @@ public abstract class Action : MonoBehaviour
 
     private void UpdateInteraction()
     {
-        switch (interactionType)
+        switch (InteractionType)
         {
             case InteractionType.Hold:
                 {
@@ -82,7 +85,7 @@ public abstract class Action : MonoBehaviour
 
                     if (Input.GetKeyDown(keyCode))
                     {
-                        value = Mathf.Clamp(value += Time.deltaTime * tapChangeSpeed, clamp.x, clamp.y);
+                        value = Mathf.Clamp(value += Time.deltaTime * tapChangeSpeed, valueClamp.x, valueClamp.y);
                     }
                 }
                 break;
@@ -92,8 +95,8 @@ public abstract class Action : MonoBehaviour
     private void UpdateValue()
     {
         if (activated)
-            value = Mathf.Clamp(value += Time.deltaTime * valueChangeSpeed, clamp.x, clamp.y);
+            value = Mathf.Clamp(value += Time.deltaTime * valueChangeSpeed, valueClamp.x, valueClamp.y);
         else
-            value = Mathf.Clamp(value -= Time.deltaTime * valueChangeSpeed, clamp.x, clamp.y);
+            value = Mathf.Clamp(value -= Time.deltaTime * valueChangeSpeed, valueClamp.x, valueClamp.y);
     }
 }
