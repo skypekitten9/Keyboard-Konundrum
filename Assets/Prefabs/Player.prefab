@@ -204,8 +204,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91e86c9ddf843344f83a89eb0ffb98a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxSpeed: 2
-  turnSpeed: 10
+  maxSpeed: 190
+  turnSpeed: 7
   collisionMask:
     serializedVersion: 2
     m_Bits: 2147487233
@@ -2609,7 +2609,7 @@ MonoBehaviour:
     onlyAnimation: 0
     positionDriveSpring: 1000
     positionDriveDamper: 10
-    positionAccuracy: 0.699
+    positionAccuracy: 0.9
     rotationDriveSpring: 1000
     rotationDriveDamper: 10
     rotationAccuracy: 1
@@ -2826,7 +2826,7 @@ MonoBehaviour:
     onlyAnimation: 0
     positionDriveSpring: 1000
     positionDriveDamper: 10
-    positionAccuracy: 0.699
+    positionAccuracy: 0.8
     rotationDriveSpring: 1000
     rotationDriveDamper: 10
     rotationAccuracy: 1
@@ -2857,7 +2857,7 @@ MonoBehaviour:
     onlyAnimation: 0
     positionDriveSpring: 1000
     positionDriveDamper: 10
-    positionAccuracy: 0.699
+    positionAccuracy: 0.8
     rotationDriveSpring: 1000
     rotationDriveDamper: 10
     rotationAccuracy: 1
@@ -2888,7 +2888,7 @@ MonoBehaviour:
     onlyAnimation: 0
     positionDriveSpring: 1000
     positionDriveDamper: 10
-    positionAccuracy: 0.699
+    positionAccuracy: 0.8
     rotationDriveSpring: 1000
     rotationDriveDamper: 10
     rotationAccuracy: 1
@@ -2919,7 +2919,7 @@ MonoBehaviour:
     onlyAnimation: 0
     positionDriveSpring: 1000
     positionDriveDamper: 10
-    positionAccuracy: 0.699
+    positionAccuracy: 0.8
     rotationDriveSpring: 1000
     rotationDriveDamper: 10
     rotationAccuracy: 1
@@ -2950,7 +2950,7 @@ MonoBehaviour:
     onlyAnimation: 0
     positionDriveSpring: 1000
     positionDriveDamper: 10
-    positionAccuracy: 0.699
+    positionAccuracy: 0.8
     rotationDriveSpring: 1000
     rotationDriveDamper: 10
     rotationAccuracy: 1
@@ -2981,7 +2981,7 @@ MonoBehaviour:
     onlyAnimation: 0
     positionDriveSpring: 1000
     positionDriveDamper: 10
-    positionAccuracy: 0.699
+    positionAccuracy: 0.8
     rotationDriveSpring: 1000
     rotationDriveDamper: 10
     rotationAccuracy: 1
@@ -3012,7 +3012,7 @@ MonoBehaviour:
     onlyAnimation: 0
     positionDriveSpring: 1000
     positionDriveDamper: 10
-    positionAccuracy: 0.699
+    positionAccuracy: 0.8
     rotationDriveSpring: 1000
     rotationDriveDamper: 10
     rotationAccuracy: 1
@@ -3043,7 +3043,7 @@ MonoBehaviour:
     onlyAnimation: 0
     positionDriveSpring: 1000
     positionDriveDamper: 10
-    positionAccuracy: 0.699
+    positionAccuracy: 0.8
     rotationDriveSpring: 1000
     rotationDriveDamper: 10
     rotationAccuracy: 1
@@ -3074,7 +3074,7 @@ MonoBehaviour:
     onlyAnimation: 0
     positionDriveSpring: 1000
     positionDriveDamper: 10
-    positionAccuracy: 0.699
+    positionAccuracy: 0.8
     rotationDriveSpring: 1000
     rotationDriveDamper: 10
     rotationAccuracy: 1

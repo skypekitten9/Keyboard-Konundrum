@@ -8,7 +8,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float turnSpeed = 3.0f;
 
     private Vector3 movement = Vector3.zero;
-    public float MoveSpeed { get { return movement.magnitude * maxSpeed; } } // [0,1]
+    public float MoveSpeed { get { return movement.magnitude * maxSpeed; } } // [0, maxSpeed]
 
     private Transform playerTransform;
     private Rigidbody playerRigidbody;
@@ -36,7 +36,7 @@ public class PlayerController : MonoBehaviour
     {
         movement.x = -Input.GetAxisRaw("Vertical");
         movement.z = Input.GetAxisRaw("Horizontal");
-        movement.Normalize();
+        if (movement.magnitude > 1.0f) movement.Normalize();
 
         /*TEMP*/ //toggle die/revive
         if (Input.GetKeyDown(KeyCode.Q))
@@ -59,11 +59,13 @@ public class PlayerController : MonoBehaviour
 
     private void PerformMovement()
     {
-        Vector3 newPosition = playerRigidbody.position + movement * maxSpeed * Time.deltaTime;
-        if (Physics.CheckSphere(newPosition + new Vector3(0f, 2.0f, 0f), 0.01f, collisionMask) == false)   //Checks if the desired move position lies within a collider or not
-        {
-            playerRigidbody.MovePosition(newPosition);
-        }
+        Vector3 velocity = movement * maxSpeed * Time.deltaTime;
+
+        //Vector3 checkPosition = playerRigidbody.position + movement * maxSpeed * Time.deltaTime;
+        //if (Physics.CheckSphere(checkPosition + new Vector3(0f, 2.0f, 0f), 0.01f, collisionMask) == false)   //Checks if the desired move position lies within a collider or not
+        //{
+        playerRigidbody.velocity = velocity;
+        //}
     }
 
     private void PerformTurning()
@@ -84,36 +86,6 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-
-
-    //private void PerformMovement()
-    //{
-    //    Vector3 newPosition = ragdollRigidbody.position + movement * maxSpeed * Time.deltaTime;
-    //    Vector3 groundCorrectedPosition = new Vector3(newPosition.x, GetGroundTargetHeight(), newPosition.z);
-
-    //    if (Physics.CheckSphere(groundCorrectedPosition, 0.01f, groundMask) == false)   //Checks if the desired move position lies within a collider or not
-    //    {
-    //        ragdollRigidbody.MovePosition(groundCorrectedPosition);
-
-    //        animator.SetFloat("Velocity X", movement.x);    //Set animation properties
-    //        animator.SetFloat("Velocity Z", movement.z);
-    //    }
-    //    else
-    //    {
-    //        //Stops the walking animation when walking into walls.
-    //        // OBS: This feature is optional!
-    //        //animator.SetFloat("Velocity X", 0.0f);
-    //        //animator.SetFloat("Velocity Z", 0.0f);
-    //    }
-    //}
-
-    //private void PerformRotation()
-    //{
-    //    float xRot = movement.z * 8.0f;
-    //    float yRot = movement.x * 70.0f;
-
-    //    ragdollRigidbody.MoveRotation(Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(xRot, yRot, 0), turnSpeed));
-    //}
 
     //private float GetGroundTargetHeight()
     //{

@@ -717,6 +717,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 3670804711913138882, guid: c53ba5c6a94047a4e86440ea22f7c7b5, type: 3}
+      propertyPath: bones.Array.data[0].positionAccuracy
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c53ba5c6a94047a4e86440ea22f7c7b5, type: 3}
 --- !u!1001 &9147228495422658557
