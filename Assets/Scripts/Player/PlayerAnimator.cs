@@ -16,7 +16,7 @@ public class PlayerAnimator : MonoBehaviour
 
     private void Update()
     {
-        animator.SetFloat("MoveSpeed", playerController.MoveSpeed);
+        animator.SetFloat("MoveSpeed", playerController.currentSpeedNormalized);
     }
 
 

@@ -1,26 +1,26 @@
 ﻿using RagdollMecanimMixer;
-using System.Collections;
 using UnityEngine;
+
 
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private float maxSpeed = 5.0f;
+    [SerializeField] private float acceleration = 0.05f;
     [SerializeField] private float turnSpeed = 3.0f;
 
-    private Vector3 movement = Vector3.zero;
-    public float MoveSpeed { get { return movement.magnitude; } } // [0, 1]
+    private Vector3 input = Vector3.zero;
+    private Vector3 velocity = Vector3.zero;
+
+    public float currentSpeedNormalized { get { return velocity.magnitude / maxSpeed; } } //[0, 1]
 
     private Transform playerTransform;
     private Rigidbody playerRigidbody;
     private RamecanMixer ramecanMixer;
 
-    const float TARGET_DISTANCE_TO_GROUND = 0.08f;
-
-    [SerializeField] private LayerMask collisionMask;
-    [SerializeField] private LayerMask groundMask;
+    [SerializeField] private LayerMask excludeSelfMask;
 
 
-    private bool dead = false;  //temp
+    private enum RagdollMode { Animated, Ragdoll }
 
 
 
@@ -34,18 +34,19 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        movement.x = -Input.GetAxisRaw("Vertical");
-        movement.z = Input.GetAxisRaw("Horizontal");
-        if (movement.magnitude > 1.0f) movement.Normalize();
+        input.x = -Input.GetAxisRaw("Vertical");
+        input.z = Input.GetAxisRaw("Horizontal");
+        if (input.magnitude > 1.0f)
+            input.Normalize();
 
-        /*TEMP*/ //toggle die/revive
+        velocity += input * acceleration * Time.deltaTime;
+        if (velocity.magnitude > (input * maxSpeed).magnitude)
+            velocity = input * maxSpeed;
+
+
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            string newState = dead ? "default" : "dead";
-
-            ramecanMixer.BeginStateTransition(newState);
-            playerRigidbody.isKinematic = !dead;
-            dead = !dead;
+            ToggleRagdollMode(RagdollMode.Animated);
         }
     }
 
@@ -54,30 +55,29 @@ public class PlayerController : MonoBehaviour
     {
         PerformMovement();
         PerformTurning();
+
+        GroundCorrection();
     }
 
 
     private void PerformMovement()
     {
-        if (MoveSpeed > 0.2f)
-        {
-            Vector3 velocity = movement * maxSpeed * Time.deltaTime;
-            playerRigidbody.velocity = velocity;
-        }
+        playerRigidbody.velocity = velocity;
+        Debug.Log("velocity: " + velocity.magnitude);
     }
 
     private void PerformTurning()
     {
-        if (movement != Vector3.zero)
+        if (input != Vector3.zero)
         {
-            playerTransform.rotation = Quaternion.Slerp(playerTransform.rotation, Quaternion.LookRotation(movement), Time.deltaTime * turnSpeed);
+            playerTransform.rotation = Quaternion.Slerp(playerTransform.rotation, Quaternion.LookRotation(input), Time.deltaTime * turnSpeed);
         }
     }
 
 
     private void LateUpdate()
     {
-        if (dead)
+        if (playerRigidbody.isKinematic == true)
         {
             Vector3 revivePos = ramecanMixer.RootBoneTr.position;
             playerRigidbody.position = revivePos;
@@ -85,47 +85,61 @@ public class PlayerController : MonoBehaviour
     }
 
 
-    //private float GetGroundTargetHeight()
-    //{
-    //    RaycastHit hit;
-    //    if (Physics.Raycast(new Ray(ragdollHipsTransform.position, Vector3.down), out hit, fallHeight * 2, groundMask))
-    //    {
-    //        return hit.point.y + TARGET_DISTANCE_TO_GROUND;
-    //    }
+    private void GroundCorrection()
+    {
+        float maxCorrection = 1.0f;
 
-    //    return -fallHeight;
-    //}
+        RaycastHit hit;
+        if (Physics.Raycast(playerTransform.position, Vector3.down, out hit, maxCorrection, excludeSelfMask))
+        {
+            if (hit.distance > 0.2f)
+            {
+                playerTransform.position = new Vector3(playerTransform.position.x, hit.point.y, playerTransform.position.z);
+            }
+        }
+        else
+        {
+            ToggleRagdollMode(RagdollMode.Ragdoll);
+        }
+    }
 
-    //private bool IsGrounded()
-    //{
-    //    return Physics.Raycast(new Ray(ragdollHipsTransform.position, Vector3.down), 0.4f, groundMask);
-    //}
+
+    private void ToggleRagdollMode(RagdollMode mode)
+    {
+        switch (mode)
+        {
+            case RagdollMode.Animated:
+                {
+                    if (playerRigidbody.isKinematic == true)
+                    {
+                        ramecanMixer.BeginStateTransition("default");
+                        playerRigidbody.isKinematic = false;
+                    }
+                }
+                break;
+
+            case RagdollMode.Ragdoll:
+                {
+                    if (playerRigidbody.isKinematic == false)
+                    {
+                        ramecanMixer.BeginStateTransition("dead");
+                        playerRigidbody.isKinematic = true;
+                    }
+                }
+                break;
+        }
+    }
 
 
-    //private IEnumerator ToggleRagdollMode(float delayBefore = 0.0f, float delayAfter = 0.0f)
-    //{
-    //    canChangeMode = false;
-    //    yield return new WaitForSeconds(delayBefore);
-
-    //    if (ragdollMode && IsGrounded() == false)
-    //    {
-    //        yield return new WaitForSeconds(delayAfter);
-    //        canChangeMode = true;
-    //        yield break;
-    //    }
-
-    //    ragdollMode = !ragdollMode;
-    //    ragdollRigidbody.isKinematic = !ragdollMode;
-    //    animator.enabled = !ragdollMode;
-
-    //    foreach (CopyJoint cj in copyJoints)
-    //    {
-    //        cj.ToggleJointMotion();
-    //    }
-
-    //    yield return new WaitForSeconds(delayAfter);
-    //    canChangeMode = true;
-    //}
+    private void OnDrawGizmos()
+    {
+        try
+        {
+            //Gizmos.color = IsGrounded() ? Color.green : Color.red;
+            //Gizmos.DrawWireSphere(playerTransform.position, 1.0f);
+        }
+        catch (System.Exception) { }
+    }
 
 
     //private void RagdollLaunch()

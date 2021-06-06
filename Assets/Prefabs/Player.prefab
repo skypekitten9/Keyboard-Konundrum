@@ -204,14 +204,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91e86c9ddf843344f83a89eb0ffb98a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxSpeed: 190
+  maxSpeed: 3
+  acceleration: 10
   turnSpeed: 7
-  collisionMask:
+  excludeSelfMask:
     serializedVersion: 2
-    m_Bits: 2147487233
-  groundMask:
-    serializedVersion: 2
-    m_Bits: 513
+    m_Bits: 2147487287
 --- !u!114 &2080012866
 MonoBehaviour:
   m_ObjectHideFlags: 0
