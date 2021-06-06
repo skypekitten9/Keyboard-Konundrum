@@ -5,6 +5,9 @@ using UnityEngine.InputSystem;
 
 public class InputDebugController : MonoBehaviour
 {
+    Vector3 directionToMove = Vector3.zero;
+    public float speed;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -12,13 +15,20 @@ public class InputDebugController : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-        
+        transform.Translate(directionToMove * speed * Time.deltaTime);
     }
 
-    public void OnDebug(InputAction.CallbackContext value)
+    public void OnMovement(InputAction.CallbackContext value)
     {
-        Debug.Log("Button pressed!");
+        Vector2 inputVector = value.ReadValue<Vector2>();
+        directionToMove = new Vector3(inputVector.x, 0, inputVector.y);
+        Debug.Log("Moving!");
+    }
+
+    public void OnThrow(InputAction.CallbackContext value)
+    {
+        Debug.Log("Thrown!");
     }
 }
