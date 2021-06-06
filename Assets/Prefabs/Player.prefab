@@ -206,7 +206,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxSpeed: 3
   acceleration: 10
-  turnSpeed: 7
+  turnSpeed: 5
   excludeSelfMask:
     serializedVersion: 2
     m_Bits: 2147487287
@@ -2560,7 +2560,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4481144018623043403}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 4a1e6ef9f8935ac4ab00bbb14a2a4956, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.17277552
@@ -4619,7 +4619,7 @@ MonoBehaviour:
   configureBonesMode: 1
   mass: 70
   layer: 9
-  physicMaterial: {fileID: 0}
+  physicMaterial: {fileID: 13400000, guid: 4a1e6ef9f8935ac4ab00bbb14a2a4956, type: 2}
   spring: 1000
   damper: 10
   showColliderSettings: 1
