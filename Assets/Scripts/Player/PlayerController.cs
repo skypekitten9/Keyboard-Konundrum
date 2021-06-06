@@ -25,7 +25,7 @@ public class PlayerController : MonoBehaviour
     private bool canChangeMode = true;
 
 
-    CopyJoint[] copyJoints;
+    d_CopyJoint[] copyJoints;
 
 
 
@@ -36,7 +36,7 @@ public class PlayerController : MonoBehaviour
         ragdollHipsRigidbody = ragdollHipsTransform.GetComponent<Rigidbody>();
         animator = transform.parent.GetComponentInChildren<Animator>();
 
-        copyJoints = GetComponentsInChildren<CopyJoint>();
+        copyJoints = GetComponentsInChildren<d_CopyJoint>();
     }
 
 
@@ -145,7 +145,7 @@ public class PlayerController : MonoBehaviour
         ragdollRigidbody.isKinematic = !ragdollMode;
         animator.enabled = !ragdollMode;
 
-        foreach (CopyJoint cj in copyJoints)
+        foreach (d_CopyJoint cj in copyJoints)
         {
             cj.ToggleJointMotion();
         }

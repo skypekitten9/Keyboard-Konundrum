@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6338659778358768585}
   - component: {fileID: 1098888748216710971}
   m_Layer: 0
-  m_Name: InputDebugManager
+  m_Name: d_InputManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -43,3 +43,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1284cf9d4a9523848afb6ecce6b85706, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerToInstansiate: {fileID: 5304070131139345046, guid: e0f4e5ed13cccd84a961cf6f51ad441c, type: 3}

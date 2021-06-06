@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class InputDebugController : MonoBehaviour
+public class d_InputController : MonoBehaviour
 {
     Vector3 directionToMove = Vector3.zero;
     public float speed;

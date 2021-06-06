@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AnimationTest : MonoBehaviour
+public class d_AnimationTest : MonoBehaviour
 {
     Animator animator;
     float velocityZ = 0f;

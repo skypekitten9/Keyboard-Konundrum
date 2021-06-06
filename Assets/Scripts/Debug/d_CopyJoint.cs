@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CopyJoint : MonoBehaviour
+public class d_CopyJoint : MonoBehaviour
 {
     [SerializeField] private Transform targetLimb;
     private ConfigurableJoint configJoint;
