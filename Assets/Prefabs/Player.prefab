@@ -207,6 +207,9 @@ MonoBehaviour:
   maxSpeed: 3
   acceleration: 10
   turnSpeed: 5
+  launchMagnitude: 30
+  minFallHeight: 0.5
+  normalCorrectionFactor: 0.5
   excludeSelfMask:
     serializedVersion: 2
     m_Bits: 2147487287
@@ -249,7 +252,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3670804710865879200}
   m_LocalRotation: {x: 0.50156415, y: 0.09621532, z: 0.27646708, w: 0.8140897}
-  m_LocalPosition: {x: 0.71333176, y: 1.4406128, z: -0.055485334}
+  m_LocalPosition: {x: 0.71333176, y: 1.4406128, z: -0.064001165}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 3670804712711244887}
@@ -1887,7 +1890,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3670804711912501670}
   m_LocalRotation: {x: 0.48946446, y: -0.026695961, z: -0.40252277, w: 0.77310246}
-  m_LocalPosition: {x: -0.7133317, y: 1.4406133, z: -0.055484172}
+  m_LocalPosition: {x: -0.7133317, y: 1.4406133, z: -0.064}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 3670804712711244887}
@@ -4144,7 +4147,7 @@ MonoBehaviour:
       serializedVersion: 2
       x: 18
       y: 25
-      width: 580
+      width: 549
       height: 18
     selected: 0
     characterBoneId: 3
@@ -4174,8 +4177,8 @@ MonoBehaviour:
       serializedVersion: 2
       x: 18
       y: 45
-      width: 113
-      height: 18
+      width: 107
+      height: 30
     selected: 0
     characterBoneId: 4
     rotation: {x: 0.70433676, y: 0.000000011827167, z: 0.0000000119200125, w: 0.709866}
@@ -4203,8 +4206,8 @@ MonoBehaviour:
     rect:
       serializedVersion: 2
       x: 18
-      y: 65
-      width: 113
+      y: 77
+      width: 107
       height: 18
     selected: 0
     characterBoneId: 5
@@ -4233,8 +4236,8 @@ MonoBehaviour:
     rect:
       serializedVersion: 2
       x: 18
-      y: 85
-      width: 113
+      y: 97
+      width: 107
       height: 18
     selected: 0
     characterBoneId: 6
@@ -4262,10 +4265,10 @@ MonoBehaviour:
     childIDs: 05000000
     rect:
       serializedVersion: 2
-      x: 134
+      x: 128
       y: 45
-      width: 117
-      height: 18
+      width: 110
+      height: 30
     selected: 1
     characterBoneId: 9
     rotation: {x: 0.7043449, y: 0.000000005913639, z: 0.0000000059599254, w: 0.7098579}
@@ -4292,9 +4295,9 @@ MonoBehaviour:
     childIDs: 06000000
     rect:
       serializedVersion: 2
-      x: 134
-      y: 65
-      width: 117
+      x: 128
+      y: 77
+      width: 110
       height: 18
     selected: 0
     characterBoneId: 10
@@ -4322,9 +4325,9 @@ MonoBehaviour:
     childIDs: 
     rect:
       serializedVersion: 2
-      x: 134
-      y: 85
-      width: 117
+      x: 128
+      y: 97
+      width: 110
       height: 18
     selected: 0
     characterBoneId: 11
@@ -4352,9 +4355,9 @@ MonoBehaviour:
     childIDs: 08000000
     rect:
       serializedVersion: 2
-      x: 253
+      x: 241
       y: 45
-      width: 345
+      width: 326
       height: 18
     selected: 0
     characterBoneId: 15
@@ -4382,9 +4385,9 @@ MonoBehaviour:
     childIDs: 090000000c0000000d000000
     rect:
       serializedVersion: 2
-      x: 253
+      x: 241
       y: 65
-      width: 345
+      width: 326
       height: 18
     selected: 0
     characterBoneId: 16
@@ -4412,9 +4415,9 @@ MonoBehaviour:
     childIDs: 0a000000
     rect:
       serializedVersion: 2
-      x: 253
+      x: 241
       y: 85
-      width: 124
+      width: 117
       height: 18
     selected: 0
     characterBoneId: 18
@@ -4442,10 +4445,10 @@ MonoBehaviour:
     childIDs: 0b000000
     rect:
       serializedVersion: 2
-      x: 253
+      x: 241
       y: 105
-      width: 124
-      height: 18
+      width: 117
+      height: 30
     selected: 0
     characterBoneId: 19
     rotation: {x: 0.4999997, y: -0.4999997, z: -0.50000036, w: 0.5000003}
@@ -4472,9 +4475,9 @@ MonoBehaviour:
     childIDs: 
     rect:
       serializedVersion: 2
-      x: 253
-      y: 125
-      width: 124
+      x: 241
+      y: 137
+      width: 117
       height: 18
     selected: 0
     characterBoneId: 20
@@ -4502,10 +4505,10 @@ MonoBehaviour:
     childIDs: 
     rect:
       serializedVersion: 2
-      x: 380
+      x: 361
       y: 85
-      width: 86
-      height: 18
+      width: 82
+      height: 30
     selected: 0
     characterBoneId: 42
     rotation: {x: -0.00000003090862, y: -0.70710677, z: -0.70710677, w: 0.00000003090862}
@@ -4532,9 +4535,9 @@ MonoBehaviour:
     childIDs: 0e000000
     rect:
       serializedVersion: 2
-      x: 470
+      x: 446
       y: 85
-      width: 128
+      width: 121
       height: 18
     selected: 0
     characterBoneId: 47
@@ -4562,10 +4565,10 @@ MonoBehaviour:
     childIDs: 0f000000
     rect:
       serializedVersion: 2
-      x: 470
+      x: 446
       y: 105
-      width: 128
-      height: 18
+      width: 121
+      height: 30
     selected: 0
     characterBoneId: 48
     rotation: {x: 0.50000036, y: 0.5000004, z: 0.49999964, w: 0.49999964}
@@ -4592,9 +4595,9 @@ MonoBehaviour:
     childIDs: 
     rect:
       serializedVersion: 2
-      x: 470
-      y: 125
-      width: 128
+      x: 446
+      y: 137
+      width: 121
       height: 18
     selected: 0
     characterBoneId: 49

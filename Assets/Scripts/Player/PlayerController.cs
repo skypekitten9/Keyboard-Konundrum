@@ -7,6 +7,12 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float maxSpeed = 3.0f;
     [SerializeField] private float acceleration = 10.0f;
     [SerializeField] private float turnSpeed = 5.0f;
+    [SerializeField] private float launchMagnitude = 30.0f;
+
+    [SerializeField] private float minFallHeight = 0.5f;
+
+    [SerializeField] private float normalCorrectionFactor = 0.5f;
+
 
     private Vector3 input = Vector3.zero;
     private Vector3 velocity = Vector3.zero;
@@ -44,6 +50,11 @@ public class PlayerController : MonoBehaviour
             velocity = input * maxSpeed;
 
 
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            RagdollLaunch();
+        }
+
         if (Input.GetKeyDown(KeyCode.Q))
         {
             ToggleRagdollMode(RagdollMode.Animated);
@@ -62,15 +73,26 @@ public class PlayerController : MonoBehaviour
 
     private void PerformMovement()
     {
-        playerRigidbody.velocity = velocity;
-        Debug.Log("velocity: " + velocity.magnitude);
+        if (playerRigidbody.isKinematic == false && velocity.magnitude > 0.1f)
+        {
+            playerRigidbody.velocity = velocity;
+            //Debug.Log("velocity: " + velocity.magnitude);
+        }
     }
 
     private void PerformTurning()
     {
-        if (input != Vector3.zero)
+        if (input != Vector3.zero && playerRigidbody.isKinematic == false)
         {
-            playerTransform.rotation = Quaternion.Slerp(playerTransform.rotation, Quaternion.LookRotation(input), Time.deltaTime * turnSpeed);
+            float xRot = 0f;
+
+            RaycastHit hit;
+            if (Physics.Raycast(playerTransform.position, Vector3.down, out hit, minFallHeight, excludeSelfMask))
+            {
+                xRot = Vector3.Angle(Vector3.up, hit.normal) * Vector3.Dot(Vector3.forward, playerTransform.forward) * normalCorrectionFactor;
+            }
+
+            playerTransform.rotation = Quaternion.Slerp(playerTransform.rotation, Quaternion.LookRotation(input) * Quaternion.Euler(xRot, 0, 0), Time.deltaTime * turnSpeed);
         }
     }
 
@@ -87,12 +109,10 @@ public class PlayerController : MonoBehaviour
 
     private void GroundCorrection()
     {
-        float maxCorrection = 1.0f;
-
         RaycastHit hit;
-        if (Physics.Raycast(playerTransform.position, Vector3.down, out hit, maxCorrection, excludeSelfMask))
+        if (Physics.Raycast(playerTransform.position, Vector3.down, out hit, minFallHeight, excludeSelfMask))
         {
-            if (hit.distance > 0.2f)
+            if (hit.distance > 0.15f)
             {
                 playerTransform.position = new Vector3(playerTransform.position.x, hit.point.y, playerTransform.position.z);
             }
@@ -131,6 +151,20 @@ public class PlayerController : MonoBehaviour
     }
 
 
+    private void RagdollLaunch()
+    {
+        if (playerRigidbody.isKinematic == false)
+        {
+            ToggleRagdollMode(RagdollMode.Ragdoll);
+
+            Vector3 launchDirection = (velocity + Vector3.up * 2).normalized;
+            Vector3 launchForce = launchMagnitude * launchDirection;
+
+            ramecanMixer.RootBoneRb.AddForce(launchForce, ForceMode.VelocityChange);
+        }
+    }
+
+
     private void OnDrawGizmos()
     {
         try
@@ -140,17 +174,5 @@ public class PlayerController : MonoBehaviour
         }
         catch (System.Exception) { }
     }
-
-
-    //private void RagdollLaunch()
-    //{
-    //    ragdollRigidbody.isKinematic = false;
-    //    StartCoroutine(ToggleRagdollMode(0.0f, 2.0f));
-
-    //    Vector3 launchDirection = (movement + Vector3.up * 2).normalized;
-    //    Vector3 launchForce = ragdollLaunchMagnitude * launchDirection;
-
-    //    ragdollRigidbody.AddForce(launchForce, ForceMode.VelocityChange);
-    //}
 
 }
