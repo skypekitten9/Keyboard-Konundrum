@@ -4,20 +4,20 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private float maxSpeed = 3.0f;
-    [SerializeField] private float acceleration = 10.0f;
-    [SerializeField] private float turnSpeed = 5.0f;
-    [SerializeField] private float launchMagnitude = 30.0f;
+    [SerializeField] private float maxSpeed = 3.0f;                 //The max speed the player can move (units/second)
+    [SerializeField] private float acceleration = 10.0f;            //Factor deciding how fast the player can accelerate. Greater value => reach max speed faster
+    [SerializeField] private float turnSpeed = 5.0f;                //Factor deciding how fast the player can turn. Greater value => turn faster
+    [SerializeField] private float launchMagnitude = 30.0f;         //The force exerted on the player when ragdoll-launching
 
-    [SerializeField] private float minFallHeight = 0.5f;
+    [SerializeField] private float minFallHeight = 0.5f;            //The minimum distance to the ground that the player can correct it's position to. Any greater distance causes a fall.
 
-    [SerializeField] private float normalCorrectionFactor = 0.5f;
+    [SerializeField] private float normalCorrectionFactor = 0.5f;   //How well alligned the player should be to the surface's normal.
 
 
-    private Vector3 input = Vector3.zero;
-    private Vector3 velocity = Vector3.zero;
+    private Vector3 input = Vector3.zero;   //Movement input from gamepad/keyboard
+    private Vector3 velocity = Vector3.zero;    //The actual player's velocity, after acceleration and maxSpeed clamp
 
-    public float currentSpeedNormalized { get { return velocity.magnitude / maxSpeed; } } //[0, 1]
+    public float currentSpeedNormalized { get { return velocity.magnitude / maxSpeed; } } //Normalized player's speed, used in animations. [0, 1]
 
     private Transform playerTransform;
     private Rigidbody playerRigidbody;
@@ -70,7 +70,9 @@ public class PlayerController : MonoBehaviour
         GroundCorrection();
     }
 
-
+    /// <summary>
+    /// Move the player according to the calculated velocity
+    /// </summary>
     private void PerformMovement()
     {
         if (playerRigidbody.isKinematic == false && velocity.magnitude > 0.1f)
@@ -80,6 +82,9 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Turn the player based on the input movement direction
+    /// </summary>
     private void PerformTurning()
     {
         if (input != Vector3.zero && playerRigidbody.isKinematic == false)
@@ -101,12 +106,15 @@ public class PlayerController : MonoBehaviour
     {
         if (playerRigidbody.isKinematic == true)
         {
-            Vector3 revivePos = ramecanMixer.RootBoneTr.position;
-            playerRigidbody.position = revivePos;
+            Vector3 revivePos = ramecanMixer.RootBoneTr.position;  
+            playerRigidbody.position = revivePos;    //Sets the position to revive to, to the ragdoll's position.
         }
     }
 
 
+    /// <summary>
+    /// Moves the player to the ground OR triggers a ragdoll-fall
+    /// </summary>
     private void GroundCorrection()
     {
         RaycastHit hit;
@@ -123,7 +131,9 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-
+    /// <summary>
+    /// Function for switching between ragdoll-modes
+    /// </summary>
     private void ToggleRagdollMode(RagdollMode mode)
     {
         switch (mode)
@@ -150,7 +160,9 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-
+    /// <summary>
+    /// Trigger ragdoll mode and launch the ragdoll in the movement direction
+    /// </summary>
     private void RagdollLaunch()
     {
         if (playerRigidbody.isKinematic == false)
@@ -169,8 +181,7 @@ public class PlayerController : MonoBehaviour
     {
         try
         {
-            //Gizmos.color = IsGrounded() ? Color.green : Color.red;
-            //Gizmos.DrawWireSphere(playerTransform.position, 1.0f);
+
         }
         catch (System.Exception) { }
     }
