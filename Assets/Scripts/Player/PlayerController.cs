@@ -8,7 +8,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float turnSpeed = 3.0f;
 
     private Vector3 movement = Vector3.zero;
-    public float MoveSpeed { get { return movement.magnitude * maxSpeed; } } // [0, maxSpeed]
+    public float MoveSpeed { get { return movement.magnitude; } } // [0, 1]
 
     private Transform playerTransform;
     private Rigidbody playerRigidbody;
@@ -59,13 +59,11 @@ public class PlayerController : MonoBehaviour
 
     private void PerformMovement()
     {
-        Vector3 velocity = movement * maxSpeed * Time.deltaTime;
-
-        //Vector3 checkPosition = playerRigidbody.position + movement * maxSpeed * Time.deltaTime;
-        //if (Physics.CheckSphere(checkPosition + new Vector3(0f, 2.0f, 0f), 0.01f, collisionMask) == false)   //Checks if the desired move position lies within a collider or not
-        //{
-        playerRigidbody.velocity = velocity;
-        //}
+        if (MoveSpeed > 0.2f)
+        {
+            Vector3 velocity = movement * maxSpeed * Time.deltaTime;
+            playerRigidbody.velocity = velocity;
+        }
     }
 
     private void PerformTurning()
