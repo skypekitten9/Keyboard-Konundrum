@@ -1,4 +1,5 @@
 ﻿using RagdollMecanimMixer;
+using System.Collections;
 using UnityEngine;
 
 
@@ -17,7 +18,7 @@ public class PlayerController : MonoBehaviour
     private Vector3 input = Vector3.zero;   //Movement input from gamepad/keyboard
     private Vector3 velocity = Vector3.zero;    //The actual player's velocity, after acceleration and maxSpeed clamp
 
-    public float currentSpeedNormalized { get { return velocity.magnitude / maxSpeed; } } //Normalized player's speed, used in animations. [0, 1]
+    private float currentSpeedNormalized { get { return velocity.magnitude / maxSpeed; } } //Normalized player's speed, used in animations. [0, 1]
 
     private Transform playerTransform;
     private Rigidbody playerRigidbody;
@@ -25,8 +26,16 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private LayerMask excludeSelfMask;
 
+    private bool dead { get { return playerRigidbody.isKinematic == true; } }
+    private float deadTimer = 0f;
+    private float deadDelay = 0.1f;
+
+    private bool reviving = false;
+
 
     private enum RagdollMode { Animated, Ragdoll }
+
+    private Animator animator;
 
 
 
@@ -35,6 +44,8 @@ public class PlayerController : MonoBehaviour
         playerTransform = transform.GetChild(0).transform;
         playerRigidbody = GetComponentInChildren<Rigidbody>();
         ramecanMixer = GetComponentInChildren<RamecanMixer>();
+
+        animator = GetComponentInChildren<Animator>();
     }
 
 
@@ -49,6 +60,7 @@ public class PlayerController : MonoBehaviour
         if (velocity.magnitude > (input * maxSpeed).magnitude)
             velocity = input * maxSpeed;
 
+        animator.SetFloat("MoveSpeed", currentSpeedNormalized);
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
@@ -57,7 +69,10 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            ToggleRagdollMode(RagdollMode.Animated);
+            if (dead)
+                ToggleRagdollMode(RagdollMode.Animated);
+            else
+                ToggleRagdollMode(RagdollMode.Ragdoll);
         }
     }
 
@@ -75,7 +90,7 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void PerformMovement()
     {
-        if (playerRigidbody.isKinematic == false && velocity.magnitude > 0.1f)
+        if (!dead && !reviving && velocity.magnitude > 0.1f)
         {
             playerRigidbody.velocity = velocity;
             //Debug.Log("velocity: " + velocity.magnitude);
@@ -87,7 +102,7 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void PerformTurning()
     {
-        if (input != Vector3.zero && playerRigidbody.isKinematic == false)
+        if (!dead && !reviving && input != Vector3.zero)
         {
             float xRot = 0f;
 
@@ -104,11 +119,44 @@ public class PlayerController : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (playerRigidbody.isKinematic == true)
+        if (dead)
         {
-            Vector3 revivePos = ramecanMixer.RootBoneTr.position;  
+            deadTimer += Time.deltaTime;
+            if (ramecanMixer.RootBoneRb.velocity.magnitude > 0.4f || ramecanMixer.RootBoneRb.angularVelocity.magnitude > 2.0f)
+                deadTimer = 0;
+
+            Vector3 revivePos = ramecanMixer.RootBoneTr.position;
             playerRigidbody.position = revivePos;    //Sets the position to revive to, to the ragdoll's position.
+
+            Vector3 reviveDir = ramecanMixer.RootBoneTr.forward;
+            playerRigidbody.rotation = Quaternion.Euler(0, Quaternion.LookRotation(-reviveDir, Vector3.up).y, 0);
+
+            if (deadTimer >= deadDelay)
+                StartCoroutine(Revive());
         }
+
+        Debug.Log("up: " + ramecanMixer.RootBoneTr.up);
+    }
+
+
+    private IEnumerator Revive()
+    {
+        if (reviving)
+            yield break;
+        reviving = true;
+
+        GroundCorrection();
+
+        if (Vector3.Dot(ramecanMixer.RootBoneTr.forward, Vector3.up) > 0f)
+            animator.SetTrigger("Revive_Up");
+        else
+            animator.SetTrigger("Revive_Down");
+
+        yield return new WaitForSeconds(1.0f);
+        ToggleRagdollMode(RagdollMode.Animated);
+
+        yield return new WaitForSeconds(2.0f);
+        reviving = false;
     }
 
 
@@ -150,10 +198,11 @@ public class PlayerController : MonoBehaviour
 
             case RagdollMode.Ragdoll:
                 {
-                    if (playerRigidbody.isKinematic == false)
+                    if (!dead)
                     {
                         ramecanMixer.BeginStateTransition("dead");
                         playerRigidbody.isKinematic = true;
+                        animator.SetTrigger("Die");
                     }
                 }
                 break;
@@ -165,7 +214,7 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void RagdollLaunch()
     {
-        if (playerRigidbody.isKinematic == false)
+        if (!dead)
         {
             ToggleRagdollMode(RagdollMode.Ragdoll);
 
