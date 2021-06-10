@@ -1,7 +1,7 @@
 ﻿using RagdollMecanimMixer;
 using System.Collections;
 using UnityEngine;
-
+using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
@@ -51,29 +51,24 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        input.x = -Input.GetAxisRaw("Vertical");
-        input.z = Input.GetAxisRaw("Horizontal");
-        if (input.magnitude > 1.0f)
-            input.Normalize();
-
         velocity += input * acceleration * Time.deltaTime;
         if (velocity.magnitude > (input * maxSpeed).magnitude)
             velocity = input * maxSpeed;
 
         animator.SetFloat("MoveSpeed", currentSpeedNormalized);
 
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            RagdollLaunch();
-        }
+        //if (Input.GetKeyDown(KeyCode.Space))
+        //{
+        //    RagdollLaunch();
+        //}
 
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            if (dead)
-                ToggleRagdollMode(RagdollMode.Animated);
-            else
-                ToggleRagdollMode(RagdollMode.Ragdoll);
-        }
+        //if (Input.GetKeyDown(KeyCode.Q))
+        //{
+        //    if (dead)
+        //        ToggleRagdollMode(RagdollMode.Animated);
+        //    else
+        //        ToggleRagdollMode(RagdollMode.Ragdoll);
+        //}
     }
 
 
@@ -83,6 +78,13 @@ public class PlayerController : MonoBehaviour
         PerformTurning();
 
         GroundCorrection();
+    }
+
+
+    public void OnSetMovement(InputAction.CallbackContext value)
+    {
+        Vector2 inputVector = value.ReadValue<Vector2>();
+        input = new Vector3(-inputVector.y, 0, inputVector.x);
     }
 
     /// <summary>
@@ -212,7 +214,7 @@ public class PlayerController : MonoBehaviour
     /// <summary>
     /// Trigger ragdoll mode and launch the ragdoll in the movement direction
     /// </summary>
-    private void RagdollLaunch()
+    public void OnRagdollLaunch()
     {
         if (!dead)
         {

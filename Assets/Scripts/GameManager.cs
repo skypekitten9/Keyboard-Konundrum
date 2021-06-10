@@ -1,26 +1,41 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class GameManager : MonoBehaviour
+public class GameManager : Singleton<GameManager>
 {
-
-    public static GameManager Instance { get; private set; }
     public bool GameOver { get; private set; }
     public Color keyboardColor, playerColor;
     public float timeOut;
-    void Awake()
+
+
+
+    protected GameManager() { }
+
+
+    private void Awake()
     {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-        }
-        else
-        {
-            Instance = this;
-        }
     }
+
+    private void Start()
+    {
+    }
+
+    private void Update()
+    {
+    }
+
+
+    private void OnDrawGizmos()
+    {
+        try
+        {
+
+        }
+        catch (System.Exception) { }
+    }
+
+
 
     public void Win(WinType winType)
     {
