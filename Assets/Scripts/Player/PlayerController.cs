@@ -1,169 +1,238 @@
-﻿using System.Collections;
+﻿using RagdollMecanimMixer;
+using System.Collections;
 using UnityEngine;
+
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private float maxSpeed = 5.0f;
-    [SerializeField] private float turnSpeed = 3.0f;
-    [SerializeField] private float ragdollLaunchMagnitude = 300.0f;
+    [SerializeField] private float maxSpeed = 3.0f;                 //The max speed the player can move (units/second)
+    [SerializeField] private float acceleration = 10.0f;            //Factor deciding how fast the player can accelerate. Greater value => reach max speed faster
+    [SerializeField] private float turnSpeed = 5.0f;                //Factor deciding how fast the player can turn. Greater value => turn faster
+    [SerializeField] private float launchMagnitude = 30.0f;         //The force exerted on the player when ragdoll-launching
 
-    private Vector3 movement = Vector3.zero;
+    [SerializeField] private float minFallHeight = 0.5f;            //The minimum distance to the ground that the player can correct it's position to. Any greater distance causes a fall.
 
-    private Rigidbody ragdollRigidbody;
-    private Transform ragdollHipsTransform;
-    private Rigidbody ragdollHipsRigidbody;
+    [SerializeField] private float normalCorrectionFactor = 0.5f;   //How well alligned the player should be to the surface's normal.
+
+
+    private Vector3 input = Vector3.zero;   //Movement input from gamepad/keyboard
+    private Vector3 velocity = Vector3.zero;    //The actual player's velocity, after acceleration and maxSpeed clamp
+
+    private float currentSpeedNormalized { get { return velocity.magnitude / maxSpeed; } } //Normalized player's speed, used in animations. [0, 1]
+
+    private Transform playerTransform;
+    private Rigidbody playerRigidbody;
+    private RamecanMixer ramecanMixer;
+
+    [SerializeField] private LayerMask excludeSelfMask;
+
+    private bool dead { get { return playerRigidbody.isKinematic == true; } }
+    private float deadTimer = 0f;
+    private float deadDelay = 0.1f;
+
+    private bool reviving = false;
+
+
+    private enum RagdollMode { Animated, Ragdoll }
 
     private Animator animator;
-
-    const float TARGET_DISTANCE_TO_GROUND = 0.16f;
-    private float fallHeight = 1.5f;
-
-
-    [SerializeField] private LayerMask groundMask;
-
-    private bool ragdollMode = false;
-    private bool canChangeMode = true;
-
-
-    d_CopyJoint[] copyJoints;
 
 
 
     private void Awake()
     {
-        ragdollRigidbody = GetComponent<Rigidbody>();
-        ragdollHipsTransform = transform.GetChild(2).transform;
-        ragdollHipsRigidbody = ragdollHipsTransform.GetComponent<Rigidbody>();
-        animator = transform.parent.GetComponentInChildren<Animator>();
+        playerTransform = transform.GetChild(0).transform;
+        playerRigidbody = GetComponentInChildren<Rigidbody>();
+        ramecanMixer = GetComponentInChildren<RamecanMixer>();
 
-        copyJoints = GetComponentsInChildren<d_CopyJoint>();
+        animator = GetComponentInChildren<Animator>();
     }
 
 
     private void Update()
     {
-        //if (Input.GetKeyDown(KeyCode.Return))
-        //    StartCoroutine(ToggleRagdollMode());
+        input.x = -Input.GetAxisRaw("Vertical");
+        input.z = Input.GetAxisRaw("Horizontal");
+        if (input.magnitude > 1.0f)
+            input.Normalize();
 
-        movement.x = -Input.GetAxisRaw("Vertical");
-        movement.z = Input.GetAxisRaw("Horizontal");
-        movement.Normalize();
+        velocity += input * acceleration * Time.deltaTime;
+        if (velocity.magnitude > (input * maxSpeed).magnitude)
+            velocity = input * maxSpeed;
 
-        if (Input.GetKeyDown(KeyCode.RightControl) && ragdollMode == false && canChangeMode == true)
+        animator.SetFloat("MoveSpeed", currentSpeedNormalized);
+
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             RagdollLaunch();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            if (dead)
+                ToggleRagdollMode(RagdollMode.Animated);
+            else
+                ToggleRagdollMode(RagdollMode.Ragdoll);
         }
     }
 
 
     private void FixedUpdate()
     {
-        if (ragdollMode == false && canChangeMode == true)    //enable ragdoll
+        PerformMovement();
+        PerformTurning();
+
+        GroundCorrection();
+    }
+
+    /// <summary>
+    /// Move the player according to the calculated velocity
+    /// </summary>
+    private void PerformMovement()
+    {
+        if (!dead && !reviving && velocity.magnitude > 0.1f)
         {
-            if (ragdollHipsRigidbody.velocity.y > 7.0f || transform.position.y - GetGroundTargetHeight() >= fallHeight)
+            playerRigidbody.velocity = velocity;
+            //Debug.Log("velocity: " + velocity.magnitude);
+        }
+    }
+
+    /// <summary>
+    /// Turn the player based on the input movement direction
+    /// </summary>
+    private void PerformTurning()
+    {
+        if (!dead && !reviving && input != Vector3.zero)
+        {
+            float xRot = 0f;
+
+            RaycastHit hit;
+            if (Physics.Raycast(playerTransform.position, Vector3.down, out hit, minFallHeight, excludeSelfMask))
             {
-                StartCoroutine(ToggleRagdollMode(0.0f, 2.0f));
-                return;
+                xRot = Vector3.Angle(Vector3.up, hit.normal) * Vector3.Dot(Vector3.forward, playerTransform.forward) * normalCorrectionFactor;
             }
-        }
-        else if (ragdollMode == true && canChangeMode == true && IsGrounded())      //get up from ground
-        {
-            StartCoroutine(ToggleRagdollMode(1.0f, 2.0f));
-            return;
-        }
 
-        //Debug.Log($"Ragdoll vel_y= {ragdollHipsRigidbody.velocity.y}");
-
-
-        if (ragdollMode == false)
-        {
-            PerformRotation();
-            PerformMovement();
+            playerTransform.rotation = Quaternion.Slerp(playerTransform.rotation, Quaternion.LookRotation(input) * Quaternion.Euler(xRot, 0, 0), Time.deltaTime * turnSpeed);
         }
     }
 
 
-    private void PerformMovement()
+    private void LateUpdate()
     {
-        Vector3 newPosition = ragdollRigidbody.position + movement * maxSpeed * Time.deltaTime;
-        Vector3 groundCorrectedPosition = new Vector3(newPosition.x, GetGroundTargetHeight(), newPosition.z);
-
-        if (Physics.CheckSphere(groundCorrectedPosition, 0.01f, groundMask) == false)   //Checks if the desired move position lies within a collider or not
+        if (dead)
         {
-            ragdollRigidbody.MovePosition(groundCorrectedPosition);
+            deadTimer += Time.deltaTime;
+            if (ramecanMixer.RootBoneRb.velocity.magnitude > 0.4f || ramecanMixer.RootBoneRb.angularVelocity.magnitude > 2.0f)
+                deadTimer = 0;
 
-            animator.SetFloat("Velocity X", movement.x);    //Set animation properties
-            animator.SetFloat("Velocity Z", movement.z);
+            Vector3 revivePos = ramecanMixer.RootBoneTr.position;
+            playerRigidbody.position = revivePos;    //Sets the position to revive to, to the ragdoll's position.
+
+            Vector3 reviveDir = ramecanMixer.RootBoneTr.forward;
+            playerRigidbody.rotation = Quaternion.Euler(0, Quaternion.LookRotation(-reviveDir, Vector3.up).y, 0);
+
+            if (deadTimer >= deadDelay)
+                StartCoroutine(Revive());
+        }
+
+        Debug.Log("up: " + ramecanMixer.RootBoneTr.up);
+    }
+
+
+    private IEnumerator Revive()
+    {
+        if (reviving)
+            yield break;
+        reviving = true;
+
+        GroundCorrection();
+
+        if (Vector3.Dot(ramecanMixer.RootBoneTr.forward, Vector3.up) > 0f)
+            animator.SetTrigger("Revive_Up");
+        else
+            animator.SetTrigger("Revive_Down");
+
+        yield return new WaitForSeconds(1.0f);
+        ToggleRagdollMode(RagdollMode.Animated);
+
+        yield return new WaitForSeconds(2.0f);
+        reviving = false;
+    }
+
+
+    /// <summary>
+    /// Moves the player to the ground OR triggers a ragdoll-fall
+    /// </summary>
+    private void GroundCorrection()
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(playerTransform.position, Vector3.down, out hit, minFallHeight, excludeSelfMask))
+        {
+            if (hit.distance > 0.15f)
+            {
+                playerTransform.position = new Vector3(playerTransform.position.x, hit.point.y, playerTransform.position.z);
+            }
         }
         else
         {
-            //Stops the walking animation when walking into walls.
-            // OBS: This feature is optional!
-            //animator.SetFloat("Velocity X", 0.0f);
-            //animator.SetFloat("Velocity Z", 0.0f);
+            ToggleRagdollMode(RagdollMode.Ragdoll);
         }
     }
 
-    private void PerformRotation()
+    /// <summary>
+    /// Function for switching between ragdoll-modes
+    /// </summary>
+    private void ToggleRagdollMode(RagdollMode mode)
     {
-        float xRot = movement.z * 8.0f;
-        float yRot = movement.x * 70.0f;
-
-        ragdollRigidbody.MoveRotation(Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(xRot, yRot, 0), turnSpeed));
-    }
-
-    private float GetGroundTargetHeight()
-    {
-        RaycastHit hit;
-        if (Physics.Raycast(new Ray(ragdollHipsTransform.position, Vector3.down), out hit, fallHeight * 2, groundMask))
+        switch (mode)
         {
-            return hit.point.y + TARGET_DISTANCE_TO_GROUND;
-        }
+            case RagdollMode.Animated:
+                {
+                    if (playerRigidbody.isKinematic == true)
+                    {
+                        ramecanMixer.BeginStateTransition("default");
+                        playerRigidbody.isKinematic = false;
+                    }
+                }
+                break;
 
-        return -fallHeight;
+            case RagdollMode.Ragdoll:
+                {
+                    if (!dead)
+                    {
+                        ramecanMixer.BeginStateTransition("dead");
+                        playerRigidbody.isKinematic = true;
+                        animator.SetTrigger("Die");
+                    }
+                }
+                break;
+        }
     }
 
-    private bool IsGrounded()
-    {
-        return Physics.Raycast(new Ray(ragdollHipsTransform.position, Vector3.down), 0.4f, groundMask);
-    }
-
-
-    private IEnumerator ToggleRagdollMode(float delayBefore = 0.0f, float delayAfter = 0.0f)
-    {
-        canChangeMode = false;
-        yield return new WaitForSeconds(delayBefore);
-
-        if (ragdollMode && IsGrounded() == false)
-        {
-            yield return new WaitForSeconds(delayAfter);
-            canChangeMode = true;
-            yield break;
-        }
-
-        ragdollMode = !ragdollMode;
-        ragdollRigidbody.isKinematic = !ragdollMode;
-        animator.enabled = !ragdollMode;
-
-        foreach (d_CopyJoint cj in copyJoints)
-        {
-            cj.ToggleJointMotion();
-        }
-
-        yield return new WaitForSeconds(delayAfter);
-        canChangeMode = true;
-    }
-
-
+    /// <summary>
+    /// Trigger ragdoll mode and launch the ragdoll in the movement direction
+    /// </summary>
     private void RagdollLaunch()
     {
-        ragdollRigidbody.isKinematic = false;
-        StartCoroutine(ToggleRagdollMode(0.0f, 2.0f));
+        if (!dead)
+        {
+            ToggleRagdollMode(RagdollMode.Ragdoll);
 
-        Vector3 launchDirection = (movement + Vector3.up * 2).normalized;
-        Vector3 launchForce = ragdollLaunchMagnitude * launchDirection;
+            Vector3 launchDirection = (velocity + Vector3.up * 2).normalized;
+            Vector3 launchForce = launchMagnitude * launchDirection;
 
-        ragdollRigidbody.AddForce(launchForce, ForceMode.VelocityChange);
+            ramecanMixer.RootBoneRb.AddForce(launchForce, ForceMode.VelocityChange);
+        }
+    }
+
+
+    private void OnDrawGizmos()
+    {
+        try
+        {
+
+        }
+        catch (System.Exception) { }
     }
 
 }
