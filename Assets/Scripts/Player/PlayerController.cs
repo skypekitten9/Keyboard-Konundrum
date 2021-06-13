@@ -16,24 +16,24 @@ public class PlayerController : MonoBehaviour
 
 
     private Vector3 input = Vector3.zero;   //Movement input from gamepad/keyboard
-    private Vector3 velocity = Vector3.zero;    //The actual player's velocity, after acceleration and maxSpeed clamp
+    private Vector3 velocity = Vector3.zero;    //The actual player's movement velocity, after acceleration and maxSpeed clamp
 
     private float currentSpeedNormalized { get { return velocity.magnitude / maxSpeed; } } //Normalized player's speed, used in animations. [0, 1]
 
     private Transform playerTransform;
     private Rigidbody playerRigidbody;
-    private RamecanMixer ramecanMixer;
+    public RamecanMixer RamecanMixer { get; private set; }
 
     [SerializeField] private LayerMask excludeSelfMask;
 
-    private bool dead { get { return playerRigidbody.isKinematic == true; } }
+    public bool Dead { get { return playerRigidbody.isKinematic == true; } }
     private float deadTimer = 0f;
     private float deadDelay = 0.1f;
 
-    private bool reviving = false;
+    public bool Reviving = false;
 
 
-    private enum RagdollMode { Animated, Ragdoll }
+    public enum RagdollMode { Animated, Ragdoll }
 
     private Animator animator;
 
@@ -43,7 +43,7 @@ public class PlayerController : MonoBehaviour
     {
         playerTransform = transform.GetChild(0).transform;
         playerRigidbody = GetComponentInChildren<Rigidbody>();
-        ramecanMixer = GetComponentInChildren<RamecanMixer>();
+        RamecanMixer = GetComponentInChildren<RamecanMixer>();
 
         animator = GetComponentInChildren<Animator>();
     }
@@ -56,19 +56,6 @@ public class PlayerController : MonoBehaviour
             velocity = input * maxSpeed;
 
         animator.SetFloat("MoveSpeed", currentSpeedNormalized);
-
-        //if (Input.GetKeyDown(KeyCode.Space))
-        //{
-        //    RagdollLaunch();
-        //}
-
-        //if (Input.GetKeyDown(KeyCode.Q))
-        //{
-        //    if (dead)
-        //        ToggleRagdollMode(RagdollMode.Animated);
-        //    else
-        //        ToggleRagdollMode(RagdollMode.Ragdoll);
-        //}
     }
 
 
@@ -92,10 +79,9 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void PerformMovement()
     {
-        if (!dead && !reviving && velocity.magnitude > 0.1f)
+        if (!Dead && !Reviving)
         {
             playerRigidbody.velocity = velocity;
-            //Debug.Log("velocity: " + velocity.magnitude);
         }
     }
 
@@ -104,7 +90,7 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void PerformTurning()
     {
-        if (!dead && !reviving && input != Vector3.zero)
+        if (!Dead && !Reviving && input != Vector3.zero)
         {
             float xRot = 0f;
 
@@ -121,35 +107,33 @@ public class PlayerController : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (dead)
+        if (Dead)
         {
             deadTimer += Time.deltaTime;
-            if (ramecanMixer.RootBoneRb.velocity.magnitude > 0.4f || ramecanMixer.RootBoneRb.angularVelocity.magnitude > 2.0f)
+            if (RamecanMixer.RootBoneRb.velocity.magnitude > 0.4f || RamecanMixer.RootBoneRb.angularVelocity.magnitude > 2.0f)
                 deadTimer = 0;
 
-            Vector3 revivePos = ramecanMixer.RootBoneTr.position;
+            Vector3 revivePos = RamecanMixer.RootBoneTr.position;
             playerRigidbody.position = revivePos;    //Sets the position to revive to, to the ragdoll's position.
 
-            Vector3 reviveDir = ramecanMixer.RootBoneTr.forward;
+            Vector3 reviveDir = RamecanMixer.RootBoneTr.forward;
             playerRigidbody.rotation = Quaternion.Euler(0, Quaternion.LookRotation(-reviveDir, Vector3.up).y, 0);
 
             if (deadTimer >= deadDelay)
                 StartCoroutine(Revive());
         }
-
-        Debug.Log("up: " + ramecanMixer.RootBoneTr.up);
     }
 
 
     private IEnumerator Revive()
     {
-        if (reviving)
+        if (Reviving)
             yield break;
-        reviving = true;
+        Reviving = true;
 
         GroundCorrection();
 
-        if (Vector3.Dot(ramecanMixer.RootBoneTr.forward, Vector3.up) > 0f)
+        if (Vector3.Dot(RamecanMixer.RootBoneTr.forward, Vector3.up) > 0f)
             animator.SetTrigger("Revive_Up");
         else
             animator.SetTrigger("Revive_Down");
@@ -158,7 +142,7 @@ public class PlayerController : MonoBehaviour
         ToggleRagdollMode(RagdollMode.Animated);
 
         yield return new WaitForSeconds(2.0f);
-        reviving = false;
+        Reviving = false;
     }
 
 
@@ -181,10 +165,12 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+
+
     /// <summary>
     /// Function for switching between ragdoll-modes
     /// </summary>
-    private void ToggleRagdollMode(RagdollMode mode)
+    public void ToggleRagdollMode(RagdollMode mode)
     {
         switch (mode)
         {
@@ -192,7 +178,7 @@ public class PlayerController : MonoBehaviour
                 {
                     if (playerRigidbody.isKinematic == true)
                     {
-                        ramecanMixer.BeginStateTransition("default");
+                        RamecanMixer.BeginStateTransition("default");
                         playerRigidbody.isKinematic = false;
                     }
                 }
@@ -200,9 +186,9 @@ public class PlayerController : MonoBehaviour
 
             case RagdollMode.Ragdoll:
                 {
-                    if (!dead)
+                    if (!Dead)
                     {
-                        ramecanMixer.BeginStateTransition("dead");
+                        RamecanMixer.BeginStateTransition("dead");
                         playerRigidbody.isKinematic = true;
                         animator.SetTrigger("Die");
                     }
@@ -216,14 +202,14 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     public void OnRagdollLaunch()
     {
-        if (!dead)
+        if (!Dead)
         {
             ToggleRagdollMode(RagdollMode.Ragdoll);
 
             Vector3 launchDirection = (velocity + Vector3.up * 2).normalized;
             Vector3 launchForce = launchMagnitude * launchDirection;
 
-            ramecanMixer.RootBoneRb.AddForce(launchForce, ForceMode.VelocityChange);
+            RamecanMixer.RootBoneRb.AddForce(launchForce, ForceMode.VelocityChange);
         }
     }
 
