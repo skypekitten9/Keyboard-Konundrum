@@ -30,13 +30,14 @@ public class PlayerController : MonoBehaviour
     private float deadTimer = 0f;
     private float deadDelay = 0.1f;
 
-    public bool Reviving = false;
+    public bool Reviving { get; private set; } = false;
 
 
     public enum RagdollMode { Animated, Ragdoll }
 
     private Animator animator;
-
+    private float revive_up_time;
+    private float revive_down_time;
 
 
     private void Awake()
@@ -46,6 +47,20 @@ public class PlayerController : MonoBehaviour
         RamecanMixer = GetComponentInChildren<RamecanMixer>();
 
         animator = GetComponentInChildren<Animator>();
+
+        AnimationClip[] clips = animator.runtimeAnimatorController.animationClips;
+        foreach (AnimationClip c in clips)
+        {
+            switch (c.name)
+            {
+                case "Revive_up":
+                    revive_up_time = c.length / 3.0f;
+                    break;
+                case "Revive_down":
+                    revive_down_time = c.length / 3.0f;
+                    break;
+            }
+        }
     }
 
 
@@ -104,13 +119,15 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-
+    /// <summary>
+    /// Used for cheking if the player should be revived or not
+    /// </summary>
     private void LateUpdate()
     {
         if (Dead)
         {
             deadTimer += Time.deltaTime;
-            if (RamecanMixer.RootBoneRb.velocity.magnitude > 0.4f || RamecanMixer.RootBoneRb.angularVelocity.magnitude > 2.0f)
+            if (RamecanMixer.RootBoneRb.velocity.magnitude > 0.8f || RamecanMixer.RootBoneRb.angularVelocity.magnitude > 4.0f)
                 deadTimer = 0;
 
             Vector3 revivePos = RamecanMixer.RootBoneTr.position;
@@ -133,15 +150,22 @@ public class PlayerController : MonoBehaviour
 
         GroundCorrection();
 
+        float animationTime;
         if (Vector3.Dot(RamecanMixer.RootBoneTr.forward, Vector3.up) > 0f)
+        {
             animator.SetTrigger("Revive_Up");
+            animationTime = revive_up_time;
+        }
         else
+        {
             animator.SetTrigger("Revive_Down");
+            animationTime = revive_down_time;
+        }
 
         yield return new WaitForSeconds(1.0f);
         ToggleRagdollMode(RagdollMode.Animated);
 
-        yield return new WaitForSeconds(2.0f);
+        yield return new WaitForSeconds(animationTime);
         Reviving = false;
     }
 
@@ -166,7 +190,6 @@ public class PlayerController : MonoBehaviour
     }
 
 
-
     /// <summary>
     /// Function for switching between ragdoll-modes
     /// </summary>
@@ -186,7 +209,7 @@ public class PlayerController : MonoBehaviour
 
             case RagdollMode.Ragdoll:
                 {
-                    if (!Dead)
+                    if (!Dead && !Reviving)
                     {
                         RamecanMixer.BeginStateTransition("dead");
                         playerRigidbody.isKinematic = true;
@@ -202,7 +225,7 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     public void OnRagdollLaunch()
     {
-        if (!Dead)
+        if (!Dead && !Reviving)
         {
             ToggleRagdollMode(RagdollMode.Ragdoll);
 
