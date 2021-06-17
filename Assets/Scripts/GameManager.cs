@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -15,15 +16,21 @@ public class GameManager : Singleton<GameManager>
 
     private void Awake()
     {
+
     }
 
     private void Start()
     {
+        //FetchTerrain()
+        //Randomnize terrain
+        //Change state to build level
     }
 
     private void Update()
     {
     }
+
+    
 
 
     private void OnDrawGizmos()
