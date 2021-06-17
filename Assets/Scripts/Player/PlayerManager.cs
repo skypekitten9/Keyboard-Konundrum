@@ -11,14 +11,14 @@ public class PlayerManager : Singleton<PlayerManager>
 
     private void Start()
     {
-        InstantiatePlayers();   
+           
     }
 
-    private void InstantiatePlayers()
+    public void InstantiatePlayers(int amount)
     {
         playerList = new List<d_InputController>();
         Vector3 spawnPos = Vector3.zero;
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < amount; i++)
         {
             GameObject spawnedPlayer = Instantiate(playerToInstansiate, spawnPos, Quaternion.identity) as GameObject;
             spawnPos.x = spawnPos.x + 1;
