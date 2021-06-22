@@ -4,23 +4,44 @@
 [SelectionBase]
 public class Tile : MonoBehaviour
 {
+    [SerializeField] private GameObject newTilePrefab = null;
+    [SerializeField] [Range(-180.0f, 180.0f)] private float newRotation = 0.0f;
+    [SerializeField] private bool canSetTileInRuntime;
+
+
     public KeyCode KeyCode { get; private set; }
+
 
 
     public void Initialize(KeyCode keyCode, string tileName)
     {
         this.name = tileName;
-        GetComponentInChildren<TMPro.TMP_Text>().text = tileName;
         this.KeyCode = keyCode;
+        GetComponentInChildren<TMPro.TMP_Text>().text = tileName;
+
+        canSetTileInRuntime = false;
     }
 
 
-    public void SetTile(GameObject original)
+    public void SetTile()
     {
-        this.GetComponent<MeshFilter>().sharedMesh = original.GetComponent<MeshFilter>().sharedMesh;
-        this.GetComponent<MeshCollider>().sharedMesh = original.GetComponent<MeshCollider>().sharedMesh;
+        SetTile(newTilePrefab, newRotation);
+    }
 
-        CopyAction(original.GetComponent<Action>());
+    public void SetTile(GameObject original, float rotation)
+    {
+        if (Application.isPlaying == true && canSetTileInRuntime == false)
+            return;
+
+        if (original != null)
+        {
+            this.GetComponent<MeshFilter>().sharedMesh = original.GetComponent<MeshFilter>().sharedMesh;
+            this.GetComponent<MeshCollider>().sharedMesh = original.GetComponent<MeshCollider>().sharedMesh;
+            CopyAction(original.GetComponent<Action>());
+        }
+
+        this.transform.rotation = Quaternion.AngleAxis(rotation, Vector3.up);
+        this.transform.GetChild(0).rotation = Quaternion.Euler(90.0f, Quaternion.AngleAxis(-rotation, -Vector3.forward).eulerAngles.y, 0f);
     }
 
 

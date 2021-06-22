@@ -77,9 +77,7 @@ public class TilesManager : Singleton<TilesManager>
             {
                 Tiles[c] = tileObjectsByRow[i][j].GetComponent<Tile>();
                 Tiles[c].Initialize(keyCodes[c + padding], tileNames[c + padding]);
-
-                /*Temp*/
-                Tiles[c].SetTile(debug_tileReference);
+                Tiles[c].SetTile();
             }
             padding += rowsKeysCounts[i] - tileObjectsByRow[i].Length;
         }

@@ -4,7 +4,6 @@ using UnityEngine;
 [CustomEditor(typeof(TilesManager)), CanEditMultipleObjects]
 public class TilesManager_Editor : Editor
 {
-
     private (float, float)[] tilePositions = new (float, float)[]
     {
             (-6.77f, 0.45f), (-5.77f, 0.45f), (-4.77f, 0.45f), (-3.77f, 0.45f), (-2.77f, 0.45f), (-1.77f, 0.45f), (-0.77f, 0.45f), (0.23f, 0.45f), (1.23f, 0.45f), (2.23f, 0.45f), (3.23f, 0.45f), (4.23f, 0.45f), (5.23f, 0.45f), (6.64f, 0.45f),
@@ -33,38 +32,21 @@ public class TilesManager_Editor : Editor
             //    Debug.Log(string.Join(", ", positions));
             //}
 
+            if (GUILayout.Button("Reassign Keys"))
+            {
+                tilesManager.AssignKeycodesToTiles();
+            }        
+
+            EditorGUILayout.Separator();
+
             if (GUILayout.Button("Regenerate Tiles"))
             {
                 if (EditorUtility.DisplayDialog("Regenerate Tiles", "Are you sure you want to regenerate the tiles?\nThis action can not be undone!", "Yes", "Cancel"))
                     tilesManager.Generate(tilePositions);
             }
-
-            if (GUILayout.Button("Reassign Keys"))
-            {
-                tilesManager.AssignKeycodesToTiles();
-            }
         }
 
         serializedObject.ApplyModifiedProperties();
-    }
-
-    protected virtual void OnSceneGUI()
-    {
-        //Keyboard keyboard = target as Keyboard;
-
-        //if (keyboard != null && keyboard.Keys != null)
-        //{
-        //    for (int i = 0; i < keyboard.Keys.Length; i++)
-        //    {
-        //        Handles.color = Color.red;
-
-        //        if (Handles.Button(keyboard.Keys[i].transform.position, Quaternion.identity, Gizmos.probeSize, Gizmos.probeSize, Handles.SphereHandleCap))
-        //        {
-
-        //        }
-        //    }
-        //}
-
     }
 
 }

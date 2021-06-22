@@ -24,7 +24,7 @@ public class PlayerController : MonoBehaviour
     private Rigidbody playerRigidbody;
     public RamecanMixer RamecanMixer { get; private set; }
 
-    [SerializeField] private LayerMask excludeSelfMask;
+    [SerializeField] private LayerMask excludeSelfMask = -1;
 
     public bool Dead { get { return playerRigidbody.isKinematic == true; } }
     private float deadTimer = 0f;
@@ -86,7 +86,7 @@ public class PlayerController : MonoBehaviour
     public void OnSetMovement(InputAction.CallbackContext value)
     {
         Vector2 inputVector = value.ReadValue<Vector2>();
-        input = new Vector3(-inputVector.y, 0, inputVector.x);
+        input = new Vector3(inputVector.x, 0, inputVector.y);
     }
 
     /// <summary>
